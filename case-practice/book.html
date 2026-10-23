@@ -1,0 +1,317 @@
+<title>Book Case Room</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,500;1,6..72,400&display=swap">
+<style>
+/* Layout: one reading column, like a notepad on the interview table. Interviewer lines in serif, your work in sans, numbers in mono. */
+:root{
+  --bg:#f5f6f2; --grid:#e3e6de; --paper:#ffffff; --ink:#1c2430; --muted:#5d6672; --line:#d5d9d0;
+  --accent:#0d6a63; --accent-ink:#ffffff; --hl:#fff1a8; --hl-ink:#3a3200;
+  --good:#1f7a3a; --warn:#a46200; --bad:#b3261e; --iv:#eef1f6;
+  --display:"Newsreader",Georgia,"Times New Roman",serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#13171c; --grid:#1c2229; --paper:#1a2027; --ink:#e6e9ed; --muted:#9aa3ad; --line:#2d353e;
+  --accent:#4fbfb3; --accent-ink:#0b1514; --hl:#4a4213; --hl-ink:#fff3b0;
+  --good:#5cc97a; --warn:#e3a646; --bad:#f07a70; --iv:#212934; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13171c; --grid:#1c2229; --paper:#1a2027; --ink:#e6e9ed; --muted:#9aa3ad; --line:#2d353e;
+  --accent:#4fbfb3; --accent-ink:#0b1514; --hl:#4a4213; --hl-ink:#fff3b0;
+  --good:#5cc97a; --warn:#e3a646; --bad:#f07a70; --iv:#212934; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px}
+.wrap{max-width:780px;margin:0 auto;padding-block:20px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:500;text-wrap:balance;margin:0}
+h1{font-size:2.3rem;line-height:1.1}
+h2{font-size:1.6rem;line-height:1.2}
+h3{font-size:1.15rem}
+p{margin:0}
+.eyebrow{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:7px 13px}
+button:hover{border-color:var(--accent)}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+button.ghost{background:transparent}
+button.small{padding:4px 10px;font-size:.85rem}
+textarea,input[type=text]{font:inherit;width:100%;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);padding:9px 11px}
+textarea{min-height:84px;resize:vertical}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.top .brand{font-family:var(--display);font-size:1.25rem;font-style:italic}
+.toggle{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted)}
+
+/* home */
+.intro{display:grid;gap:12px;margin-bottom:26px}
+.intro p{max-width:62ch;color:var(--muted)}
+.method{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:28px}
+.method ol{margin:10px 0 0;padding-left:20px;display:grid;gap:6px}
+.method li span{color:var(--muted)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{text-align:left;display:grid;gap:8px;padding:14px 16px;border-radius:10px;background:var(--paper)}
+.card h3{font-size:1.2rem}
+.meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{font-size:.72rem;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.d-Easy{color:var(--good);border-color:currentColor}
+.d-Medium{color:var(--warn);border-color:currentColor}
+.d-Hard{color:var(--bad);border-color:currentColor}
+.status{font-size:.8rem;color:var(--muted)}
+.status.done{color:var(--good);font-weight:600}
+.fitcard{margin-top:22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--paper);border:1px dashed var(--line);border-radius:10px;padding:14px 16px}
+
+/* case view */
+.casehead{display:grid;gap:8px;margin-bottom:18px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+  background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:16px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.timer{font-family:var(--mono);font-size:1.05rem;font-variant-numeric:tabular-nums}
+.timer.over{color:var(--bad)}
+.progress{display:flex;gap:4px}
+.progress i{width:18px;height:5px;border-radius:3px;background:var(--line)}
+.progress i.on{background:var(--accent)}
+.turns{display:grid;gap:22px}
+.turn{display:grid;gap:10px}
+.iv{background:var(--iv);border-radius:4px 12px 12px 12px;padding:12px 16px;max-width:92%}
+.iv .who,.youlbl{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--muted);display:block;margin-bottom:4px}
+.iv p,.iv .say{font-family:var(--display);font-size:1.12rem;line-height:1.45}
+.iv .say p+p{margin-top:8px}
+.you{display:grid;gap:8px;margin-left:auto;width:min(100%,640px)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input{max-width:220px}
+.verdict{font-size:.88rem;font-weight:600}
+.verdict.good{color:var(--good)} .verdict.close{color:var(--warn)} .verdict.bad{color:var(--bad)}
+.unit{font-size:.82rem;color:var(--muted)}
+div.data{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:6px;padding:12px 16px;display:grid;gap:8px}
+.answer{background:var(--hl);color:var(--hl-ink);border-radius:6px;padding:12px 16px;display:grid;gap:8px}
+.answer .lbl,.data .lbl{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;opacity:.8}
+.answer ul,.data ul{margin:0;padding-left:18px}
+.answer li+li,.data li+li{margin-top:3px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums;min-width:100%}
+th,td{border-bottom:1px solid var(--line);padding:5px 10px;text-align:left;white-space:nowrap}
+.answer th,.answer td{border-color:color-mix(in srgb,var(--hl-ink) 25%,transparent)}
+th{font-weight:600}
+.calc{font-family:var(--mono);font-size:.86rem;line-height:1.7;white-space:pre-wrap}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{border-radius:999px;font-size:.88rem}
+.chips button.asked{background:var(--iv);color:var(--muted)}
+.qa{display:grid;gap:8px}
+.next{display:flex;justify-content:flex-end}
+.score{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:12px}
+.scoregrid{display:grid;gap:10px}
+.scoreline{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center}
+.scoreline small{grid-column:1/-1;color:var(--muted);font-size:.8rem}
+.dots{display:flex;gap:4px}
+.dots button{width:34px;padding:5px 0;text-align:center}
+.dots button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.notes{margin-top:30px;display:grid;gap:6px}
+.muted{color:var(--muted)}
+.tip{font-size:.85rem;color:var(--muted);font-style:italic}
+@media (prefers-reduced-motion:no-preference){.turn.new{animation:rise .35s ease-out}@keyframes rise{from{transform:translateY(6px);opacity:.4}to{transform:none;opacity:1}}}
+@media (max-width:520px){h1{font-size:1.85rem}.iv{max-width:100%}}
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script src="book-cases.js"></script>
+<script>
+const CASES = window.CASES;
+
+const FIT = ["Tell me about yourself.","Why consulting?","Why our firm?","Give me an example of leadership.","Walk me through your CV.","If I should remember you in one word, what would it be?","Why should we give you an offer?","Tell me about a group project that was very important to you, and why.","What are your top 3 strengths?","What are your 3 biggest weaknesses?","Tell me about a time you challenged yourself.","Tell me about a time you led a group.","What is the most interesting course you took at university, and why?","What skills do you aim to improve?","Why are you a good candidate for a career in consulting?","Tell me about a leadership experience that tested your ability to work with and manage others.","What is your biggest regret?","Why are you not pursuing a career directly related to your major?","Why did you choose your major?","All the candidates here have interesting profiles. What sets you apart?"];
+
+const SCORE_DIMS = [
+  ["Structure","Was your framework MECE and tailored to this case?"],
+  ["Math","Correct, clean, and talked through out loud?"],
+  ["Business sense","Did you sanity-check results and spot the insight?"],
+  ["Communication","Clear answer-first recommendation, confident delivery?"]
+];
+
+/* ---------- storage (per-viewer convenience only) ---------- */
+const KEY="book-case-room-v1";
+let store={};
+try{store=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){store={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+function cs(id){store[id]=store[id]||{step:0,asked:[],ans:{},num:{},seen:{},scores:{},done:false,notes:"",secs:0};return store[id]}
+
+/* ---------- number parsing ---------- */
+function parseNum(s){
+  if(!s)return NaN;
+  let t=String(s).toLowerCase().replace(/[$,%\s]/g,"").replace(/years?|yrs?|ppl|people/g,"");
+  let neg=false;
+  if(/^\(.*\)$/.test(t)){neg=true;t=t.slice(1,-1)}
+  const m=t.match(/^(-?\d*\.?\d+)(k|thousand|m|mm|mn|million|b|bn|billion)?$/);
+  if(!m)return NaN;
+  let v=parseFloat(m[1]);
+  const u=m[2]||"";
+  if(u==="k"||u==="thousand")v*=1e3;
+  else if(["m","mm","mn","million"].includes(u))v*=1e6;
+  else if(["b","bn","billion"].includes(u))v*=1e9;
+  return neg?-v:v;
+}
+function judge(spec,v){
+  if(isNaN(v))return["bad","I couldn't read that number. Try 2.3B, 450k or 1750."];
+  if(spec.min!=null){
+    if(v>=spec.min&&v<=spec.max)return["good","In the range the interviewer expects."];
+    const lo=spec.min*.8,hi=spec.max*1.2;
+    return v>=lo&&v<=hi?["close","Close, but outside the expected range. Can you defend it?"]:["bad","Off from what the interviewer expects. Revisit your logic."];
+  }
+  const err=Math.abs(v-spec.value)/Math.max(Math.abs(spec.value),1e-9);
+  if(err<=spec.tol)return["good","Spot on."];
+  if(err<=.2)return["close","In the ballpark, within 20%. Check your rounding or a step."];
+  if(Math.sign(v)!==Math.sign(spec.value))return["bad","Wrong sign. Check whether this is a gain or a loss."];
+  return["bad","Not there yet. Re-check your steps, or ask for the data."];
+}
+
+/* ---------- app state ---------- */
+let view={name:"home"}, filter="All", ivMode=false, tick=null, fitTick=null;
+try{ivMode=localStorage.getItem(KEY+"-iv")==="1"}catch(e){}
+const app=document.getElementById("app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmtT=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+function avg(sc){const v=Object.values(sc||{});return v.length?(v.reduce((a,b)=>a+b,0)/v.length):null}
+
+function go(v){view=v;clearInterval(tick);clearInterval(fitTick);render();window.scrollTo(0,0)}
+
+function topBar(){
+  return `<div class="top"><span class="brand">Book Case Room</span>
+  <label class="toggle"><input type="checkbox" id="ivmode" ${ivMode?"checked":""}> Interviewer mode (show all answers)</label></div>`;
+}
+
+function renderHome(){
+  const types=["All",...new Set(CASES.map(c=>c.type))];
+  const list=CASES.filter(c=>filter==="All"||c.type===filter);
+  const doneN=CASES.filter(c=>store[c.id]?.done).length;
+  app.innerHTML=topBar()+`
+  <section class="intro"><div class="eyebrow">Hacking the Case Interview · 5 cases</div>
+  <h1>Practice cases the way they're asked</h1>
+  <p>Each case runs like a real interview: a client story and objective, exhibits you have to read, a twist partway through, and a decision to make at the end. The interviewer only hands over data when you ask for it, and the model answer stays hidden until you've committed to yours.</p></section>
+  <section class="method"><h3>How to run each case</h3><ol>
+  <li><b>Read the prompt out loud and play it back.</b> <span>Summarize the client, the problem and the objective in one sentence.</span></li>
+  <li><b>Ask clarifying questions.</b> <span>Type your own first, then tap the question chips to hear the interviewer's answers.</span></li>
+  <li><b>Take 60–90 seconds to build a framework.</b> <span>Sketch it on paper, type it in, then compare.</span></li>
+  <li><b>Estimate before you ask for data.</b> <span>Commit to a number, then tap "Ask for the data". Do the math out loud and check it with the number box.</span></li>
+  <li><b>Say what each number means.</b> <span>"So what?" after every calculation is what separates good candidates.</span></li>
+  <li><b>Close answer-first.</b> <span>Recommendation, 2–3 reasons, risks, next steps. Then score yourself honestly.</span></li></ol>
+  <p class="tip" style="margin-top:10px">Practicing with a friend? Hand them the screen with Interviewer mode on: they see every answer and the data to give you.</p></section>
+  <div class="row" style="justify-content:space-between;margin-bottom:10px"><h2>Cases</h2><span class="status">${doneN} of ${CASES.length} done</span></div>
+  <div class="filters" role="group" aria-label="Filter by case type">${types.map(t=>`<button class="small" data-filter="${t}" aria-pressed="${t===filter}">${t}</button>`).join("")}</div>
+  <div class="cases">${list.map(c=>{const s=store[c.id];const a=avg(s?.scores);
+    const st=s?.done?`<span class="status done">Done${a?` · ${a.toFixed(1)}/5`:""}</span>`:s&&s.step>0?`<span class="status">In progress · step ${s.step} of ${c.steps.length}</span>`:`<span class="status">Not started</span>`;
+    return `<button class="card" data-open="${c.id}"><div class="meta"><span class="chip">${c.type}</span><span class="chip d-${c.diff}">${c.diff}</span></div><h3>${c.title}</h3>${st}</button>`}).join("")}</div>
+  <div class="fitcard"><div><h3>Fit drill</h3><p class="muted">A random fit question with a 2-minute clock. Answers over 2 minutes lose the interviewer.</p></div><button class="primary" data-fit>Start fit drill</button></div>`;
+}
+
+function stepHTML(c,s,i,isCurrent){
+  const st=c.steps[i];
+  const k=String(i);
+  const seenData=ivMode||s.seen["d"+k], seenAns=ivMode||s.seen["a"+k];
+  const nv=s.num[k]||"";
+  const hints=s.seen["h"+k]||0;
+  let v="";
+  if(st.num&&nv){const [cls,msg]=judge(st.num,parseNum(nv));v=`<span class="verdict ${cls}">${msg}</span>`}
+  return `<div class="turn ${isCurrent?"new":""}">
+   <div class="iv"><span class="who">Interviewer</span><div class="say">${st.say.map(l=>`<p>${l}</p>`).join("")}</div></div>
+   <div class="you"><label class="youlbl" for="ans-${c.id}-${k}">Your answer</label>
+     <textarea id="ans-${c.id}-${k}" data-ans="${k}" placeholder="Talk it through out loud, then jot your structure or math here…">${esc(s.ans[k]||"")}</textarea>
+     ${st.num?`<div class="numrow"><input type="text" id="num-${c.id}-${k}" data-num="${k}" value="${esc(nv)}" placeholder="Your number" inputmode="decimal"><button class="small" data-check="${k}">Check number</button><span class="unit">${st.num.unit}</span></div><div id="v-${k}">${v}</div>`:""}
+     <div class="row">
+       ${st.give&&!seenData?`<button class="small" data-reveal="d${k}">Ask for the data</button>`:""}
+       ${st.stuck&&!seenAns&&hints<st.stuck.length?`<button class="small ghost" data-hint="${k}">${hints?"Another hint":"I'm stuck: hint"}</button>`:""}
+       ${!seenAns?`<button class="small ghost" data-reveal="a${k}">Show model answer</button>`:""}
+     </div>
+   </div>
+   ${hints&&!seenAns?`<div class="iv"><span class="who">Interviewer · hint</span><div class="say">${st.stuck.slice(0,hints).map(h=>`<p>${h}</p>`).join("")}</div></div>`:""}
+   ${st.give&&seenData?`<div class="data"><span class="lbl">Interviewer hands you</span>${st.give.html}</div>`:""}
+   ${seenAns?`<div class="answer"><span class="lbl">Model answer</span>${st.key||""}${st.listen?`<p><b>A strong answer covers:</b></p><ul>${st.listen.map(l=>`<li>${l}</li>`).join("")}</ul>`:""}</div>`:""}
+  </div>`;
+}
+
+function renderCase(){
+  const c=CASES.find(x=>x.id===view.id), s=cs(c.id);
+  const total=c.steps.length;
+  const shown=s.done?total:Math.min(s.step,total);
+  let turns=`<div class="turn"><div class="iv"><span class="who">Interviewer</span><div class="say">${c.prompt.map(l=>`<p>${l}</p>`).join("")}<p><i>What questions do you have before you start?</i></p></div></div>
+   <div class="you"><label class="youlbl" for="ans-${c.id}-q">Your clarifying questions</label>
+   <textarea id="ans-${c.id}-q" data-ans="q" placeholder="Write your own questions first…">${esc(s.ans.q||"")}</textarea>
+   <div class="chips">${c.clarify.map((q,j)=>`<button class="${s.asked.includes(j)||ivMode?"asked":""}" data-ask="${j}">${q[0]}</button>`).join("")}</div></div>
+   ${c.clarify.map((q,j)=>(s.asked.includes(j)||ivMode)?`<div class="iv"><span class="who">Interviewer · ${esc(q[0])}</span><p>${q[1]}</p></div>`:"").join("")}
+  </div>`;
+  for(let i=0;i<shown;i++)turns+=stepHTML(c,s,i,i===shown-1);
+  const finished=shown>=total;
+  const nextBtn=!finished?`<div class="next"><button class="primary" data-next>${shown===0?"I'm ready, start the case":"Next question"}</button></div>`:"";
+  const scoreBox=finished?`<div class="score"><h3>Debrief: score yourself</h3><div class="scoregrid">${SCORE_DIMS.map(([d,h])=>`<div class="scoreline"><b>${d}</b><div class="dots" role="group" aria-label="${d} score">${[1,2,3,4,5].map(n=>`<button data-score="${d}" data-n="${n}" aria-pressed="${s.scores[d]===n}">${n}</button>`).join("")}</div><small>${h}</small></div>`).join("")}</div>
+   <div class="row"><button class="primary" data-done>${s.done?"Saved":"Finish case"}</button><button class="ghost" data-reset>Restart this case</button><span class="status">Time on case: ${fmtT(s.secs)}</span></div></div>`:"";
+  app.innerHTML=topBar()+`
+  <div class="bar"><button class="small ghost" data-home>← All cases</button>
+   <div class="progress" aria-label="Progress">${c.steps.map((_,i)=>`<i class="${i<shown?"on":""}"></i>`).join("")}</div>
+   <div class="row"><span class="timer ${s.secs>1800?"over":""}" id="timer">${fmtT(s.secs)}</span><button class="small" data-pause>${view.paused?"Resume":"Pause"}</button></div></div>
+  <header class="casehead"><div class="meta"><span class="chip">${c.type}</span><span class="chip d-${c.diff}">${c.diff}</span></div><h2>${c.title}</h2><p class="tip">About ${c.mins} minutes. Talk out loud as if the interviewer is listening.</p></header>
+  <div class="turns">${turns}${nextBtn}${scoreBox}</div>
+  <div class="notes"><label class="youlbl" for="notes-${c.id}">Scratch notes</label><textarea id="notes-${c.id}" data-notes placeholder="Numbers, assumptions, things to say in the recommendation…">${esc(s.notes||"")}</textarea></div>`;
+  clearInterval(tick);
+  if(!view.paused&&!s.done)tick=setInterval(()=>{s.secs++;const t=document.getElementById("timer");if(t){t.textContent=fmtT(s.secs);t.classList.toggle("over",s.secs>1800)}if(s.secs%5===0)save()},1000);
+}
+
+function renderFit(){
+  const q=FIT[view.q];
+  app.innerHTML=topBar()+`
+  <div class="bar"><button class="small ghost" data-home>← All cases</button><span class="timer" id="fittimer">02:00</span></div>
+  <div class="turns"><div class="turn"><div class="iv"><span class="who">Interviewer</span><p>${q}</p></div>
+  <div class="you"><label class="youlbl" for="fit-ans">Your answer (bullets are fine; say it out loud)</label><textarea id="fit-ans" placeholder="Situation, what you did, result, what it says about you…"></textarea>
+  <div class="row"><button class="primary" data-fit>Next question</button></div></div></div>
+  <div class="data"><span class="lbl">Casebook tips</span><ul><li>Tell a story, not a list. Make the personal details that make you "you" shine.</li><li>Stay concise: past 1.5–2 minutes, the interviewer loses the thread.</li><li>Don't recite memorized answers; prepare stories and stay spontaneous.</li><li>For leadership: give the reasons behind your actions and own your shortcomings. Leader ≠ boss.</li><li>For "Why this firm": use real conversations with its people, not just what's online.</li></ul></div></div>`;
+  let left=120;const t=document.getElementById("fittimer");
+  clearInterval(fitTick);fitTick=setInterval(()=>{left--;if(t){t.textContent=left>=0?fmtT(left):"-"+fmtT(-left);t.classList.toggle("over",left<0)}},1000);
+}
+
+function render(){
+  if(view.name==="case")renderCase();else if(view.name==="fit")renderFit();else renderHome();
+}
+
+/* ---------- events ---------- */
+app.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  const d=b.dataset;
+  if("open"in d)return go({name:"case",id:d.open});
+  if("filter"in d){filter=d.filter;return render()}
+  if("home"in d){save();return go({name:"home"})}
+  if("fit"in d){let n;do{n=Math.floor(Math.random()*FIT.length)}while(view.name==="fit"&&n===view.q&&FIT.length>1);return go({name:"fit",q:n})}
+  if(view.name!=="case")return;
+  const c=CASES.find(x=>x.id===view.id), s=cs(c.id);
+  if("ask"in d){const j=+d.ask;if(!s.asked.includes(j))s.asked.push(j)}
+  else if("next"in d){s.step=Math.min(s.step+1,c.steps.length)}
+  else if("reveal"in d){s.seen[d.reveal]=true}
+  else if("hint"in d){s.seen["h"+d.hint]=(s.seen["h"+d.hint]||0)+1}
+  else if("check"in d){const inp=document.getElementById(`num-${c.id}-${d.check}`);s.num[d.check]=inp.value;const [cls,msg]=judge(c.steps[+d.check].num,parseNum(inp.value));document.getElementById("v-"+d.check).innerHTML=`<span class="verdict ${cls}">${msg}</span>`;save();return}
+  else if("score"in d){s.scores[d.score]=+d.n}
+  else if("done"in d){s.done=true}
+  else if("pause"in d){view.paused=!view.paused}
+  else if("reset"in d){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Tap again to erase your answers";return}delete store[c.id];save();return go({name:"case",id:c.id})}
+  save();
+  const y=window.scrollY;renderCase();
+  if("next"in d){const turns=app.querySelectorAll(".turn");turns[turns.length-1]?.scrollIntoView({behavior:"smooth",block:"start"})}else window.scrollTo(0,y);
+});
+app.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.id==="ivmode"){ivMode=t.checked;try{localStorage.setItem(KEY+"-iv",ivMode?"1":"0")}catch(er){}const y=window.scrollY;render();window.scrollTo(0,y);return}
+  if(view.name!=="case")return;
+  const s=cs(view.id);
+  if(t.dataset.ans!=null)s.ans[t.dataset.ans]=t.value;
+  else if(t.dataset.num!=null)s.num[t.dataset.num]=t.value;
+  else if("notes"in t.dataset)s.notes=t.value;
+  save();
+});
+app.addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.num!=null){e.preventDefault();app.querySelector(`[data-check="${e.target.dataset.num}"]`)?.click()}
+});
+render();
+</script>
