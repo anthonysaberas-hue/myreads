@@ -1,0 +1,654 @@
+<title>Interviewer's Binder</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap">
+<style>
+/* Layout: a ring binder. Sticky tab strip on screen, one section at a time; in print every section runs in order with page breaks. */
+:root{
+  --bg:#f3f4f7; --paper:#ffffff; --ink:#1d2230; --muted:#5b6274; --line:#d9dce5;
+  --accent:#7a2e3a; --accent-ink:#ffffff; --accent-soft:#f6e9eb;
+  --say:#eef2fb; --say-bar:#2f4f9a; --give:#fdf6e3; --give-bar:#b07a12;
+  --key:#e8f5ec; --key-bar:#23784a; --flag:#fbeceb; --flag-bar:#b3261e;
+  --display:"Newsreader",Georgia,"Times New Roman",serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14161c; --paper:#1b1e26; --ink:#e7e9ef; --muted:#9ba2b3; --line:#2e3340;
+  --accent:#e58f9c; --accent-ink:#1a0d10; --accent-soft:#33202a;
+  --say:#1d2537; --say-bar:#7e9ee6; --give:#2a2414; --give-bar:#e0ad48;
+  --key:#16291e; --key-bar:#5dc98b; --flag:#2e1918; --flag-bar:#f07a70; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14161c; --paper:#1b1e26; --ink:#e7e9ef; --muted:#9ba2b3; --line:#2e3340;
+  --accent:#e58f9c; --accent-ink:#1a0d10; --accent-soft:#33202a;
+  --say:#1d2537; --say-bar:#7e9ee6; --give:#2a2414; --give-bar:#e0ad48;
+  --key:#16291e; --key-bar:#5dc98b; --flag:#2e1918; --flag-bar:#f07a70; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.tabs-in{max-width:860px;margin:0 auto;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tabs .brand{font-family:var(--display);font-style:italic;font-size:1.15rem;margin-right:auto}
+.tabs select{font:inherit;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%}
+.wrap{max-width:860px;margin:0 auto;padding-block:24px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;text-wrap:balance;margin:0}
+h1{font-size:2.4rem;line-height:1.08}
+h2{font-size:1.75rem;line-height:1.15}
+h3{font-size:1.25rem;line-height:1.25}
+h4{font-family:var(--body);font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700}
+p{margin:0}
+ul,ol{margin:0;padding-left:20px}
+li+li{margin-top:4px}
+.sec{display:none;gap:22px}
+.sec.on{display:grid}
+.lead{font-size:1.08rem;max-width:64ch}
+.muted{color:var(--muted)}
+.eyebrow{font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:grid;gap:10px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.chip{font-size:.74rem;padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.meta{display:flex;gap:6px;flex-wrap:wrap}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums;width:100%}
+th,td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th{font-weight:600}
+.data td,.data th{white-space:nowrap}
+.calc{font-family:var(--mono);font-size:.86rem;line-height:1.7;white-space:pre-wrap}
+button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:6px 12px}
+button:hover{border-color:var(--accent)}
+button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+textarea{font:inherit;width:100%;min-height:70px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);padding:8px 10px;resize:vertical}
+
+/* script blocks */
+.blk{border-radius:6px;padding:12px 16px;display:grid;gap:6px;border-left:4px solid}
+.blk .tag{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+.say{background:var(--say);border-color:var(--say-bar)} .say .tag{color:var(--say-bar)}
+.say .line{font-family:var(--display);font-size:1.18rem;line-height:1.45}
+.give{background:var(--give);border-color:var(--give-bar)} .give .tag{color:var(--give-bar)}
+.key{background:var(--key);border-color:var(--key-bar)} .key .tag{color:var(--key-bar)}
+.flag{background:var(--flag);border-color:var(--flag-bar)} .flag .tag{color:var(--flag-bar)}
+.plain{background:var(--paper);border-color:var(--line);border:1px solid var(--line);border-left:4px solid var(--line)}
+.plain .tag{color:var(--muted)}
+.asks td:first-child{width:42%;color:var(--muted)}
+.asks td:last-child{font-family:var(--display);font-size:1.05rem}
+.check{display:grid;gap:6px;list-style:none;padding:0}
+.check label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.check input{margin-top:4px;width:17px;height:17px;flex:none;accent-color:var(--key-bar)}
+.step{display:grid;gap:10px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.stephead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.stephead .t{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.stepno{font-family:var(--mono);color:var(--accent);margin-right:6px}
+.answerline{font-size:1.05rem}
+.answerline b{font-family:var(--mono)}
+.score{display:grid;gap:12px}
+.srow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center}
+.srow small{grid-column:1/-1;color:var(--muted);font-size:.82rem}
+.dots{display:flex;gap:4px}
+.dots button{width:34px;padding:5px 0;text-align:center}
+.dots button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.total{font-family:var(--mono);font-size:1.1rem}
+.rub td{font-size:.88rem;min-width:150px}
+.rub td:first-child{min-width:120px;font-weight:600}
+.flow{display:grid;gap:8px;counter-reset:f;list-style:none;padding:0}
+.flow li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.flow li::before{counter-increment:f;content:counter(f);grid-row:span 2;font-family:var(--display);font-size:1.6rem;color:var(--accent);line-height:1}
+.flow b{font-size:1rem}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.toc button{text-align:left;display:grid;gap:4px;padding:12px 14px;border-radius:8px}
+.toc button b{font-family:var(--display);font-size:1.12rem;font-weight:600}
+.printonly{display:none}
+.navrow{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+@media (max-width:520px){h1{font-size:1.9rem}.asks td:first-child{width:auto}.asks tr{display:grid}.asks td{border:0;padding:3px 0}.asks tr{border-bottom:1px solid var(--line);padding:6px 0}}
+
+@media print{
+  @page{size:A4;margin:14mm 14mm 16mm}
+  :root{--bg:#fff;--paper:#fff;--ink:#111;--muted:#555;--line:#ccc;color-scheme:light}
+  body{font-size:10.5pt;background:#fff}
+  body::before,.tabs,.navrow,.noprint{display:none!important}
+  .wrap{max-width:none;padding:0}
+  .sec{display:grid!important;break-before:page;gap:14px}
+  .sec:first-of-type{break-before:auto}
+  .blk,.flow li,.grid2 .panel,.data,.stephead{break-inside:avoid}
+  .stephead{break-after:avoid}
+  .step.score{break-inside:avoid}
+  .step{padding:12px 14px;gap:8px}
+  .step{border-color:#bbb}
+  .printonly{display:block}
+  .dots button{border:1px solid #888}
+  textarea{min-height:60px;border:1px solid #999}
+  .toc{grid-template-columns:1fr 1fr}
+}
+</style>
+
+<nav class="tabs" aria-label="Sections"><div class="tabs-in">
+  <span class="brand">Interviewer's Binder</span>
+  <label for="jump" class="muted" style="font-size:.85rem">Go to</label>
+  <select id="jump"></select>
+</div></nav>
+<main class="wrap" id="book"></main>
+
+<script>
+/* ===================== CONTENT ===================== */
+const GUIDE = [
+{id:"start", nav:"Start here", html:`
+<div class="eyebrow">For the person playing the interviewer</div>
+<h1>You don't need to know anything about consulting.</h1>
+<p class="lead">This binder gives you everything a real interviewer has: what to say, what information to hand over and when, what a good answer sounds like, and how to score it. Your partner does the thinking. You hold the facts and keep the clock.</p>
+<div class="panel"><h3>What a case interview is, in 30 seconds</h3>
+<p>Consulting firms test candidates with a short business puzzle, called a <b>case</b>. You read out a client's problem, for example "a hot dog stand is losing money, why?". The candidate has to ask good questions, organize the problem, do some math out loud, and end with a clear recommendation. It's a test of <b>how they think</b>, not of business trivia.</p></div>
+<div class="panel"><h3>Your job, in one line each</h3><ul>
+<li><b>Read</b> the blue <i>Say</i> lines out loud, word for word if you like.</li>
+<li><b>Answer</b> questions using the <i>If they ask</i> tables. Anything not on the list: "Not important for this case, make an assumption."</li>
+<li><b>Hold back</b> the yellow <i>Give</i> boxes until the moment described. Never volunteer data early.</li>
+<li><b>Tick</b> the <i>Listen for</i> boxes as you hear them. That is your evidence for scoring.</li>
+<li><b>Never show</b> the green <i>Answer key</i>. It's for you to check the candidate's numbers.</li>
+<li><b>Score</b> at the end with the rubric, then give feedback: 2 strengths, 2 things to fix.</li></ul></div>
+<div class="panel"><h3>The colors in every case</h3>
+<div class="blk say"><span class="tag">Say</span><p class="line">Words you read out loud.</p></div>
+<div class="blk give"><span class="tag">Give only when…</span><p>Data you hand over (read it, or show this box) only when the trigger happens.</p></div>
+<div class="blk key"><span class="tag">Answer key, don't show</span><p>The right numbers and what a strong answer contains.</p></div>
+<div class="blk flag"><span class="tag">If they're stuck</span><p>Hints in order. Give one, wait 30 seconds, then the next.</p></div></div>
+<div class="panel"><h3>Before you start (2 minutes)</h3><ul class="check">
+<li><label><input type="checkbox">Pick a case you haven't read with them. Start with an <b>Easy</b> one.</label></li>
+<li><label><input type="checkbox">Read the case once to yourself, start to finish (about 5 minutes).</label></li>
+<li><label><input type="checkbox">Give the candidate paper, a pen and a calculator-free zone (no phone calculator; real interviews don't allow one).</label></li>
+<li><label><input type="checkbox">Sit across a table. Start a timer. Aim for 20–25 minutes per case.</label></li>
+<li><label><input type="checkbox">Keep a straight, friendly face. Real interviewers don't react much.</label></li></ul></div>
+<div class="navrow"><span></span><button data-go="flow">Next: how a case flows →</button></div>`},
+
+{id:"flow", nav:"How a case flows", html:`
+<div class="eyebrow">The six stages</div>
+<h2>Every case follows the same shape</h2>
+<p class="lead">Each case script below walks you through these stages. Knowing the shape helps you notice when the candidate skips one.</p>
+<ol class="flow">
+<li><b>You read the prompt</b><span class="muted">Read slowly. A good candidate writes it down and then repeats it back in their own words. If they don't, tick it as missed.</span></li>
+<li><b>They ask clarifying questions</b><span class="muted">Usually 2–4 questions: about the goal, the client, the market. Answer from the <i>If they ask</i> table. More than ~6 questions is too many.</span></li>
+<li><b>They build a framework</b><span class="muted">They'll ask for a minute or two of silence. Say "Sure, take your time." Then they explain how they'll break the problem into parts (for example "revenue" and "costs"). Compare with the Answer key.</span></li>
+<li><b>Analysis and math</b><span class="muted">They ask for data, or estimate it themselves. You give the yellow boxes. They calculate out loud. You check against the Answer key.</span></li>
+<li><b>Insight: "so what?"</b><span class="muted">After each number, a strong candidate says what it means for the client. If they don't, ask: "What does that mean for the client?"</span></li>
+<li><b>Recommendation</b><span class="muted">You say the closing line. They should give the answer <b>first</b>, then 2–3 reasons, then risks and next steps. Under a minute.</span></li></ol>
+<div class="panel"><h3>Timing guide for a 25-minute case</h3><div class="tw"><table>
+<tr><th>Stage</th><th>Target</th><th>If it runs long</th></tr>
+<tr><td>Prompt + questions</td><td>2–3 min</td><td>"Let's get going. What's your approach?"</td></tr>
+<tr><td>Framework</td><td>2–4 min</td><td>"Which part would you look at first?"</td></tr>
+<tr><td>Analysis and math</td><td>10–15 min</td><td>Give the next hint from the script.</td></tr>
+<tr><td>Recommendation</td><td>1–2 min</td><td>"In one sentence: yes or no?"</td></tr>
+<tr><td>Your feedback</td><td>5 min</td><td>Rubric + 2 strengths, 2 fixes.</td></tr></table></div></div>
+<div class="navrow"><button data-go="start">← Start here</button><button data-go="rules">Next: golden rules →</button></div>`},
+
+{id:"rules", nav:"Golden rules + phrases", html:`
+<div class="eyebrow">How to behave like a real interviewer</div>
+<h2>Golden rules</h2>
+<div class="grid2">
+<div class="panel"><h3>1. Make them ask</h3><p>Data comes out only when they ask for it, or when the script says "give if their estimate is way off". Asking for the right data is part of the test.</p></div>
+<div class="panel"><h3>2. Let them estimate first</h3><p>Many cases are <b>candidate-led</b>: they should make up reasonable numbers first. Only give the real number if theirs is far off (each script says what "far off" means), or if they ask directly.</p></div>
+<div class="panel"><h3>3. Don't confirm too fast</h3><p>When they get a number right, say "Okay, keep going." When it's wrong, say "Can you double-check that?" Never tell them the right number until they've tried twice.</p></div>
+<div class="panel"><h3>4. Silence is fine</h3><p>When they ask for time, give it: real interviewers wait. Only speak up after about 60 seconds of total silence.</p></div>
+<div class="panel"><h3>5. Push back once</h3><p>Once per case, ask "Why?" or "Are you sure?" even when they're right. It tests whether they stay calm and can defend their logic.</p></div>
+<div class="panel"><h3>6. Hints in order</h3><p>If they're stuck, use the red hint boxes one at a time. Every hint you give costs a point on "Drive" in the rubric. Note how many you gave.</p></div></div>
+<h2>Phrase bank</h2>
+<div class="panel"><div class="tw"><table class="asks">
+<tr><td>They ask for time to think</td><td>"Sure, take a minute."</td></tr>
+<tr><td>They ask something not in your script</td><td>"Good question, but it's not important here. Make a reasonable assumption."</td></tr>
+<tr><td>They ask "Is that right?"</td><td>"What do you think?" or "Walk me through how you got there."</td></tr>
+<tr><td>They're silent for a long time</td><td>"Can you walk me through what you're thinking?"</td></tr>
+<tr><td>They ramble or go off-track</td><td>"Let's focus. What do you need to answer the client's question?"</td></tr>
+<tr><td>They finish a calculation and stop</td><td>"So what does that mean for the client?"</td></tr>
+<tr><td>They made a math mistake</td><td>"Can you double-check that last step?"</td></tr>
+<tr><td>They ask you to just give the number</td><td>"What would you estimate?" (Give it if the script says so.)</td></tr>
+<tr><td>Time is running out</td><td>"The CEO just walked in. What's your recommendation?"</td></tr></table></div></div>
+<div class="navrow"><button data-go="flow">← How a case flows</button><button data-go="rubric">Next: scoring rubric →</button></div>`},
+
+{id:"rubric", nav:"Scoring rubric", html:`
+<div class="eyebrow">Use this for every case</div>
+<h2>Scoring rubric</h2>
+<p class="lead">Score each area from 1 to 5. A 3 means "would probably pass at a first-round interview". Use the ticks from the case script as evidence. Be honest: a generous score doesn't help them.</p>
+<div class="panel tw"><table class="rub">
+<tr><th>Area</th><th>1–2: Weak</th><th>3: Pass</th><th>4–5: Strong</th></tr>
+<tr><td>Structure</td><td>Jumps into numbers with no plan. Framework is a generic list or misses big pieces.</td><td>Clear framework with 2–4 parts that fit the case. Some overlap or gaps.</td><td>Framework is tailored to this client, has no overlaps or gaps, and is explained in under 2 minutes. Says which part to look at first and why.</td></tr>
+<tr><td>Math</td><td>Wrong answers, messy, silent working, or needs a calculator.</td><td>Correct with maybe one slip they fix themselves. Talks through steps.</td><td>Fast, correct, clean units (per day, per year, $M). Rounds sensibly and announces each step out loud.</td></tr>
+<tr><td>Business sense</td><td>Reports numbers without meaning. Misses the key insight even after hints.</td><td>Explains what numbers mean when asked. Finds the insight with one hint.</td><td>Says "so what" on their own, sanity-checks results ("that seems high because…"), spots the key insight unprompted.</td></tr>
+<tr><td>Communication</td><td>Hard to follow, rambles, recommendation is vague or missing.</td><td>Clear enough. Recommendation exists but is buried or long.</td><td>Answer-first, organized ("three reasons: first…"), confident, under a minute to close.</td></tr>
+<tr><td>Drive</td><td>Waits for you to lead. Needed 3+ hints.</td><td>Mostly leads. Needed 1–2 hints.</td><td>Leads the whole case, asks for the right data at the right time, suggests next steps. No hints needed.</td></tr></table></div>
+<div class="panel"><h3>Reading the total (out of 25)</h3><ul>
+<li><b>21–25</b>: Offer-level. Move to harder cases.</li>
+<li><b>16–20</b>: Solid. Fix the lowest area.</li>
+<li><b>11–15</b>: Getting there. Redo this case type in a few days.</li>
+<li><b>5–10</b>: Practice the basics: frameworks and mental math.</li></ul></div>
+<div class="panel"><h3>How to give feedback (5 minutes)</h3><ol>
+<li>Ask them first: "How do you think that went?"</li>
+<li>Share <b>2 things they did well</b>, with specific moments ("you caught that the 75–80 age group is 5 years").</li>
+<li>Share <b>2 things to fix</b>, again specific ("you didn't say what the −$100 meant for the owner").</li>
+<li>Read them the total score and their lowest area.</li></ol></div>
+<div class="navrow"><button data-go="rules">← Golden rules</button><button data-go="glossary">Next: words you'll hear →</button></div>`},
+
+{id:"glossary", nav:"Words you'll hear", html:`
+<div class="eyebrow">Plain-English glossary</div>
+<h2>Words the candidate will use</h2>
+<p class="lead">You don't need to use these. It just helps to know what they mean when you hear them.</p>
+<div class="panel tw"><table class="asks">
+<tr><td>Framework / structure</td><td>Their plan for breaking the problem into parts.</td></tr>
+<tr><td>MECE</td><td>"Mutually exclusive, collectively exhaustive": parts that don't overlap and together cover everything. Interviewers love it.</td></tr>
+<tr><td>Revenue</td><td>Money coming in. Usually price × quantity sold.</td></tr>
+<tr><td>Costs: fixed vs. variable</td><td>Fixed costs don't change with sales (rent). Variable costs grow with each unit sold (food in each hot dog).</td></tr>
+<tr><td>Profit</td><td>Revenue minus costs.</td></tr>
+<tr><td>Profit margin</td><td>Profit as a % of revenue. $10 profit on $100 revenue = 10% margin.</td></tr>
+<tr><td>COGS</td><td>"Cost of goods sold": what it costs to make the product itself.</td></tr>
+<tr><td>Payback period</td><td>Years needed to earn back an investment. Investment ÷ yearly profit.</td></tr>
+<tr><td>Breakeven</td><td>The point where revenue exactly covers costs (profit = 0).</td></tr>
+<tr><td>Market sizing</td><td>Estimating how big a market is, e.g. "how much is spent on diapers per year".</td></tr>
+<tr><td>Market share</td><td>The % of a market one company holds.</td></tr>
+<tr><td>Market entry</td><td>A case about whether a company should start selling in a new market.</td></tr>
+<tr><td>Barriers to entry</td><td>Things that make it hard to enter a market: licenses, laws, big competitors.</td></tr>
+<tr><td>Cross-selling</td><td>Selling a second product to an existing customer.</td></tr>
+<tr><td>Sanity check</td><td>Asking "does this number make sense?" before moving on.</td></tr>
+<tr><td>Price elasticity</td><td>How much customers buy less when the price goes up.</td></tr>
+<tr><td>"So what?"</td><td>What a number means for the client's decision.</td></tr></table></div>
+<div class="navrow"><button data-go="rubric">← Scoring rubric</button><button data-go="cases">Next: pick a case →</button></div>`}
+];
+
+const CASES = [
+{id:"diapers", title:"Diapers in KSA", type:"Market sizing", diff:"Easy", mins:15,
+ plain:"The candidate has to estimate how much money people in Saudi Arabia (KSA) spend on diapers in one year. No data is given up front: they should build the estimate from population numbers.",
+ bottom:"About <b>$2.3 billion per year</b>. Anything from $1.5B to $3.5B is fine if the logic is sound.",
+ steps:[
+ {name:"Read the prompt", time:"1 min",
+  say:["Estimate the market size of diapers in KSA.","Take a moment. Do you have any questions before you start?"],
+  listen:["Repeats the question back in their own words","Asks whether adults/elderly are included","Asks if we mean value ($) or number of diapers"],
+  asks:[["Do we include adults / elderly?","Yes, elderly people are included."],["Cloth or disposable?","Only disposable diapers."],["In dollars or number of diapers?","In dollars: total sales."],["Per year?","Yes, per year."],["What's the population / price?","What would you estimate? (Hold the real numbers for now.)"]]},
+ {name:"Approach", time:"2–3 min",
+  say:["How would you approach this?"],
+  listen:["Splits the population by age","Includes babies (0–3) AND elderly","Uses % of each group who wear diapers","Diapers per person per day → per year","Multiplies by price per diaper"],
+  key:"<p>A strong plan: population → people per age → who uses diapers (babies 0–3, some elderly) → how many diapers a day → per year → × price.</p>",
+  stuck:["\"Who uses diapers?\"","\"Could you split the population into groups?\"","\"Try splitting by age.\""]},
+ {name:"Population", time:"2 min",
+  say:["Okay, let's go with that. What numbers would you use for the population?"],
+  give:{when:"If they ask, or if their population is below 25M or above 45M, or their life expectancy is below 70 or above 85.", html:"<p>Population of KSA: <b>35 million</b>. Life expectancy: <b>80 years</b>. Assume the same number of people at each age.</p>"},
+  listen:["Divides population by life expectancy to get people per year of age"],
+  key:"<p class=\"answerline\">35M ÷ 80 ≈ <b>450,000</b> people per year of age (437,500 rounded).</p>"},
+ {name:"Diaper usage", time:"4–5 min",
+  say:["How many diapers are used per day?"],
+  give:{when:"When they ask how many people use diapers or how many per day. Read or show the table.", html:`<div class="tw"><table class="data"><tr><th>Age group</th><th>0–1</th><th>1–2</th><th>2–3</th><th>75–80</th></tr><tr><td>% using diapers</td><td>100%</td><td>90%</td><td>80%</td><td>30%</td></tr><tr><td>Diapers per day</td><td>10</td><td>8</td><td>6</td><td>4</td></tr></table></div>`},
+  listen:["Notices 75–80 is FIVE years of people (2.25M), not one","Calculates each group separately","Gets ~12.6M diapers per day"],
+  key:`<div class="tw"><table><tr><th>Group</th><th>People</th><th>× use</th><th>× per day</th><th>= diapers/day</th></tr><tr><td>0–1</td><td>450k</td><td>100%</td><td>10</td><td>4.5M</td></tr><tr><td>1–2</td><td>450k</td><td>90%</td><td>8</td><td>3.2M</td></tr><tr><td>2–3</td><td>450k</td><td>80%</td><td>6</td><td>2.2M</td></tr><tr><td>75–80</td><td>2.25M</td><td>30%</td><td>4</td><td>2.7M</td></tr></table></div><p class="answerline">Total ≈ <b>12.6M diapers per day</b>.</p>`,
+  stuck:["\"How many years of age are in the 75–80 group?\" (if they used 450k for it)","\"Take it one age group at a time.\""]},
+ {name:"Price and final number", time:"2 min",
+  say:["A pack of 12 diapers costs $6. What's the yearly market size?"],
+  listen:["Converts to per year (× 365)","Price per diaper = $0.50","Final ≈ $2.3B, said clearly"],
+  key:`<p class="calc">12.6M × 365 ≈ 4.6 billion diapers per year
+4.6B × $0.50 = $2.3 billion per year</p>`},
+ {name:"Close", time:"1 min",
+  say:["Great. So what's your final answer?"],
+  listen:["States the number first: \"about $2.3 billion a year\"","Mentions the key assumptions","Sanity-checks (most of the market is babies)"],
+  key:"<p>Example: \"The KSA diaper market is about $2.3 billion a year. Babies under 3 make up about 80% of it. The biggest uncertainty is elderly usage, and I assumed an even age split, which understates babies in a young country like KSA.\"</p>"}
+ ]},
+
+{id:"hotdog", title:"Hot Dog Stand", type:"Profitability", diff:"Easy", mins:15,
+ plain:"A small hot dog stand is making less money than before. The candidate has to find out why, then suggest fixes.",
+ bottom:"The stand <b>loses $100 per month</b>. The clearest fix: it throws away <b>$200 of expired food</b> every month, so better stock planning alone makes it profitable.",
+ steps:[
+ {name:"Read the prompt", time:"1–2 min",
+  say:["Your client has a hot dog stand that has been experiencing a decline in profitability in the past few months. They want to know what the problem is."],
+  listen:["Repeats the problem back","Asks about competitors","Asks about prices / what they sell"],
+  asks:[["Where is the stand?","In Hamra, Beirut."],["What do they sell? For how much?","A standard meal: a hot dog and a drink, for $6."],["Who are the competitors? Are they struggling too?","The direct competitor is Frank's Hot Dog, and they're doing fine. Indirect competitors are Roadster Diner and other restaurants."],["Any fixed costs / big investments?","Ignore fixed costs. The truck has been running for a while."],["What's the goal?","Find out why profits fell and how to fix it."]]},
+ {name:"Framework", time:"2–3 min",
+  say:["How would you structure this problem?"],
+  listen:["Profit = revenue − costs","Revenue = price × number sold","Splits costs into fixed and variable","Notes: competitor is fine, so the problem is probably inside our stand"],
+  key:"<p>Profit = Revenue (price × meals) − Costs (fixed + variable). Because Frank's is doing fine, the problem is likely internal.</p>",
+  stuck:["\"What is profit made of?\"","\"Where does the stand's money come from, and where does it go?\""]},
+ {name:"Revenue", time:"2 min",
+  say:["Let's start with revenue. How many meals do you think they sell per day?"],
+  give:{when:"If they ask, or estimate below 5 or above 60 meals a day.", html:"<p>The stand sells <b>15 meals per day</b>.</p>"},
+  listen:["$6 × 15 = $90 per day","Converts to monthly: $2,700 (30 days)"],
+  key:"<p class=\"answerline\">$6 × 15 = $90/day → <b>$2,700/month</b>.</p>"},
+ {name:"Costs and profit", time:"3–4 min",
+  say:["Now let's look at costs."],
+  give:{when:"When they ask about costs. Read the full list.", html:"<ul><li>Food cost (COGS): they use a <b>3× pricing strategy</b></li><li>Utilities (gas and electricity): $400/month</li><li>Rent: $800/month</li><li>Labor (1 chef): $500/month</li><li>Expired food: $200/month</li></ul><p class=\"muted\">If they're confused by \"3× pricing\": \"It means the selling price is three times what the food costs.\"</p>"},
+  listen:["Food cost = $6 ÷ 3 = $2 per meal","Monthly food = $900","Total costs = $2,800","Profit = −$100 per month (a loss)"],
+  key:"<p class=\"calc\">Food: $2 × 15 × 30 = $900\nTotal: 900 + 400 + 800 + 500 + 200 = $2,800\nProfit: 2,700 − 2,800 = −$100 per month</p>",
+  stuck:["\"If the price is 3 times the food cost, what's the food cost per meal?\"","\"Add up all the monthly costs.\""]},
+ {name:"Ideas to fix it", time:"3–4 min",
+  say:["They're losing money. How can they become profitable?"],
+  listen:["Organizes ideas into 'increase revenue' and 'cut costs'","Raise price, but mentions customers may buy less","Sell more: marketing, new menu items","New income: ads on the truck, delivery, toppings","Cut costs without hurting quality","Spots the $200 expired food and suggests better ordering/forecasting"],
+  key:"<p>The key insight is the <b>$200 of expired food</b>. Ordering based on actual demand removes it and turns −$100 into +$100. A strong candidate also notes that 15 meals a day is low for a busy area like Hamra and asks why Frank's does better.</p>",
+  stuck:["\"Look at the cost list again. Is any of it avoidable?\"","\"What does 'expired food' tell you about how they buy stock?\""]},
+ {name:"Close", time:"1 min",
+  say:["The owner walks in. What do you tell them?"],
+  listen:["Answer first: loses ~$100 a month","Main fix: stop wasting $200 of food","Then: grow sales / adjust price"]}
+ ]},
+
+{id:"concert", title:"Concert in Riyadh", type:"Profitability", diff:"Easy", mins:15,
+ plain:"An events company wants to put on a DJ concert in Riyadh. The candidate works out whether it makes money, then what else could go wrong.",
+ bottom:"Profit of <b>$15,800</b> if it sells out ($38,000 revenue − $22,200 costs). Then: licenses, local rules and culture, selling tickets, extra income.",
+ steps:[
+ {name:"Read the prompt", time:"1–2 min",
+  say:["Our client is an entertainment company that wants to do a concert in Riyadh with a famous DJ. They've come to us to see if it's a good idea or not."],
+  listen:["Asks what 'good idea' means (profit? brand?)","Asks about revenue sources / ticket prices"],
+  asks:[["What does 'good idea' mean? Profit?","Mainly: will it make money. Then what else they need to get right."],["One concert or a series?","A single concert."],["How do they make money?","Ticket sales and sponsors. I have numbers when you need them."]]},
+ {name:"Framework", time:"2 min",
+  say:["How would you structure this?"],
+  listen:["Revenue (tickets, sponsors, extras) − costs","Mentions feasibility: permits, local rules","Mentions demand: can we sell the tickets?"],
+  stuck:["\"What would make this concert a success for the client?\""]},
+ {name:"Revenue", time:"3 min",
+  say:["Let's look at the numbers."],
+  give:{when:"When they ask about revenue, tickets or sponsors.", html:`<div class="tw"><table class="data"><tr><th></th><th>VIP</th><th>Regular</th></tr><tr><td>Tickets</td><td>400</td><td>600</td></tr><tr><td>Price</td><td>$50</td><td>$20</td></tr></table></div><div class="tw"><table class="data"><tr><th>Sponsor</th><th>Amount</th></tr><tr><td>EJ Entertainment</td><td>$3,000</td></tr><tr><td>Sky Events</td><td>$2,000</td></tr><tr><td>DJDS Events</td><td>$1,000</td></tr></table></div>`},
+  listen:["VIP $20,000 + Regular $12,000","Sponsors $6,000","Total $38,000"],
+  key:"<p class=\"calc\">VIP: 400 × $50 = $20,000\nRegular: 600 × $20 = $12,000\nSponsors: $6,000\nTotal revenue = $38,000</p>"},
+ {name:"Costs and profit", time:"3 min",
+  say:["And on the cost side?"],
+  give:{when:"When they ask about costs.", html:"<ul><li>$3 commission to PR affiliates for each ticket sold</li><li>DJ: $6,000</li><li>Venue rent: $5,000</li><li>Maintenance and insurance: $4,000</li><li>Operational expenses: $4,200</li></ul>"},
+  listen:["Separates fixed ($19,200) from per-ticket ($3 × 1,000 = $3,000)","Total costs $22,200","Profit $15,800","Says it's profitable, and by how much (≈42% margin)"],
+  key:"<p class=\"calc\">Fixed: 6,000 + 5,000 + 4,000 + 4,200 = $19,200\nCommission: $3 × 1,000 = $3,000\nCosts = $22,200 → Profit = $15,800</p>",
+  stuck:["\"How many tickets are sold in total?\""]},
+ {name:"Beyond the numbers", time:"3 min",
+  say:["This seems profitable. What other aspects of the event do we need to address?"],
+  listen:["Licenses / permits and local regulations (may need a local partner)","Local culture and audience preferences","How to sell all tickets: online, stores, social media, timing","Extra income: merchandise, food and drinks, parking"],
+  key:"<p>Look for at least 3 of the 4 groups above. Bonus: noting the profit assumes a full sell-out, so selling tickets is the biggest risk.</p>"},
+ {name:"Close", time:"1 min",
+  say:["So, should they do it?"],
+  listen:["\"Yes\" first, with the $15.8k profit","Biggest risk: selling enough tickets","Next steps: permits, early ticket sales, add food and merch"]}
+ ]},
+
+{id:"banker", title:"Billionaire Banker", type:"Market entry", diff:"Easy", mins:15,
+ plain:"A rich person with no banking experience wants to get into Saudi banking. The candidate compares starting a new bank vs. buying an existing one.",
+ bottom:"New bank: payback <b>6.8 years</b>. Buy existing bank: <b>8 years</b>. The right answer is \"<b>it depends on how much risk the client accepts</b>\": building is faster on paper but riskier.",
+ steps:[
+ {name:"Read the prompt", time:"1–2 min",
+  say:["Your client is a billionaire considering entering the Saudi banking sector. Should they do it or not? What factors should be considered?"],
+  listen:["Asks about the client's experience","Asks about competition and regulation","Asks about the client's goal (returns? timeline?)"],
+  asks:[["Does the client have banking experience?","No, no past experience in banking."],["How competitive is the market?","Fairly saturated, but there's still room for a new player like our client."],["Any regulations stopping them?","No new regulations prevent entry. Saudization should be considered, though. (That's the requirement to employ Saudi nationals.)"],["What's the client's goal?","Good question. Keep it in mind."]]},
+ {name:"Framework", time:"2–3 min",
+  say:["What factors would you look at?"],
+  listen:["Competitors: who, how strong","Barriers to entry: laws, Saudization, local partner","Market size and the share we could win","Mentions ways to enter: build vs. buy"],
+  stuck:["\"What could make it hard to get into this market?\"","\"How could the client actually get into banking?\""]},
+ {name:"Two ways in", time:"3–4 min",
+  say:["There are two ways to enter. Here are the numbers. Which one pays back faster?"],
+  give:{when:"Read immediately with the question.", html:`<div class="tw"><table class="data"><tr><th>Option 1: open a new bank</th><th>Option 2: buy an existing bank</th></tr><tr><td>Initial investment: $15M</td><td>Cost to buy: $20M</td></tr><tr><td>Yearly revenue: $10M</td><td>Yearly profit: $2.5M</td></tr><tr><td>Profit margin: 22%</td><td></td></tr></table></div>`},
+  listen:["Option 1 profit = $10M × 22% = $2.2M","Option 1 payback ≈ 6.8 years","Option 2 payback = 8 years"],
+  key:"<p class=\"calc\">Option 1: 15 ÷ 2.2 ≈ 6.8 years\nOption 2: 20 ÷ 2.5 = 8 years</p>",
+  stuck:["\"What's the yearly profit of Option 1?\"","\"Payback is investment divided by yearly profit.\""]},
+ {name:"Push back", time:"2 min",
+  say:["So Option 1 is better, right?"],
+  listen:["Doesn't just agree","Building is riskier: no experience, no customers, $10M is only a forecast","Buying brings customers and proven profit","Says it depends on the client's risk appetite"],
+  key:"<p>This is the real test. A strong candidate says \"not necessarily\" and explains risk.</p>",
+  stuck:["\"How sure are we of the $10M revenue for a brand-new bank?\""]},
+ {name:"Close", time:"1 min",
+  say:["What's your recommendation?"],
+  listen:["Clear answer: enter, and which option depending on risk","Mentions Saudization / local partner"]}
+ ]},
+
+{id:"tv", title:"TV Family Business", type:"Market entry", diff:"Medium", mins:20,
+ plain:"A Dubai family business wants to buy a TV channel. They want their money back within 5 years. The candidate calculates whether that happens.",
+ bottom:"On paper, 5 years exactly. But that assumes every ad slot is sold. Real revenue is $8M, so payback is <b>7.5 years</b>: <b>it misses the 5-year goal</b>.",
+ steps:[
+ {name:"Read the prompt", time:"1–2 min",
+  say:["Our client is a family business in Dubai that wants to acquire a TV channel broadcasting company. They already own and run businesses in food and drink, and in transportation. Is this a good idea or not?"],
+  listen:["Asks about the client's objective","Asks how the channel makes money"],
+  asks:[["What's the goal?","To get their money back in less than 5 years (payback period under 5 years)."],["How does the channel make money?","Advertisements only."],["Do they have the money / expertise?","Yes, assume they do."],["Any regulations or barriers?","No barriers to entry."]]},
+ {name:"Framework", time:"2–3 min",
+  say:["How would you approach this?"],
+  listen:["Client: money, expertise, conflicts with their other businesses","Market: competitors, barriers","Profitability: revenue, costs, investment → payback"],
+  key:"<p>After they explain, steer them: \"The client has the capability and there are no barriers. Let's focus on profitability.\"</p>"},
+ {name:"Maximum ad revenue", time:"4 min",
+  say:["Let's focus on profitability. What's the channel's yearly revenue?"],
+  give:{when:"When they ask how much ads sell for / how the channel runs.", html:"<ul><li>Broadcasts 24 hours a day, <b>300 days</b> a year</li><li>Each hour: <b>10 minutes of ads</b>, 50 minutes of shows</li><li>Peak hours (<b>4 hours/day</b>): 1 minute of ads = <b>$250</b></li><li>Other hours (<b>20 hours/day</b>): 1 minute of ads = <b>$100</b></li></ul>"},
+  listen:["Peak: 250 × 10 × 4 × 300 = $3M","Non-peak: 100 × 10 × 20 × 300 = $6M","Total $9M per year"],
+  key:"<p class=\"calc\">Peak: $250 × 10 × 4 × 300 = $3M\nNon-peak: $100 × 10 × 20 × 300 = $6M\nTotal = $9M per year</p>",
+  stuck:["\"Start with one hour of peak time. How much money is that?\""]},
+ {name:"Payback", time:"2 min",
+  say:["The purchase costs $15 million. Yearly running costs are $6 million, mostly salaries. What's the payback period?"],
+  listen:["Profit = 9 − 6 = $3M","Payback = 15 ÷ 3 = 5 years"],
+  key:"<p class=\"answerline\">Profit $3M → payback <b>5 years</b>.</p>"},
+ {name:"Does it make sense?", time:"3 min",
+  say:["Does that result make sense to you?"],
+  listen:["Questions whether every ad slot actually sells","Realizes $9M is the maximum, not the real number","Recalculates: (8 − 6) = $2M → 7.5 years","Says it misses the 5-year goal"],
+  give:{when:"Once they question whether all ads sell (or after hint 2).", html:"<p>The channel's actual yearly revenue is <b>$8 million</b>.</p>"},
+  key:"<p class=\"calc\">8 − 6 = $2M profit → 15 ÷ 2 = 7.5 years</p><p>The key insight: <b>not all ad slots get sold</b>, so the $9M is a ceiling.</p>",
+  stuck:["\"Is every ad minute always sold?\"","\"Is $9M the real revenue or the maximum possible?\""]},
+ {name:"Speed it up", time:"3 min",
+  say:["How could they increase profit to get their money back faster?"],
+  listen:["Revenue: sell more ad slots, add subscriptions","Advertise their own food and transport businesses on the channel","Popular shows to attract viewers and advertisers","Costs: cut or outsource staff, automate","Negotiate a lower purchase price"]},
+ {name:"Close", time:"1 min",
+  say:["What's your recommendation to the family?"],
+  listen:["Answer first: not at this price (7.5 vs 5 years)","What would change it: lower price (~$10M) or +$1M profit/year"]}
+ ]},
+
+{id:"plane", title:"Plane Ticket Price", type:"Profitability", diff:"Medium", mins:20,
+ plain:"An airline wants to know the best price for a Dubai–Paris ticket. Higher prices mean fewer seats sold. The candidate finds the price that makes the most profit. This one is mostly math.",
+ bottom:"The best price is <b>$1,750</b>. At that price 125 seats sell and profit is about <b>$146,000</b>.",
+ steps:[
+ {name:"Read the prompt", time:"1 min",
+  say:["Our client is an airline based in Dubai. They're preparing a flight from Dubai to Paris and want us to find the ticket price that maximizes profit."],
+  asks:[["How many seats on the plane?","300 seats."],["How does the airline make money on the flight?","Ticket price, extra luggage, amenities, ads, a fee for minors traveling alone, pet fees. But focus on the ticket price."],["What are the costs?","Food, staff, maintenance, marketing, airport fees, fuel, insurance. I'll give you totals."]],
+  listen:["Asks how demand changes with price"]},
+ {name:"Approach", time:"2 min",
+  say:["How do you want to tackle this?"],
+  listen:["Higher price → fewer seats sold","Wants to write profit as a formula of price","Plans to find the price where profit is highest"],
+  stuck:["\"If you raise the price, what happens to the number of seats sold?\""]},
+ {name:"Demand", time:"4 min",
+  say:["Here's what we know about demand."],
+  give:{when:"Right away.", html:"<ul><li>At a price of <b>$1,000</b>, <b>200</b> seats are sold</li><li>At a price of <b>$2,000</b>, <b>100</b> seats are sold</li><li>Assume a straight-line relationship</li></ul>"},
+  listen:["Writes Seats = −0.1 × Price + 300"],
+  key:"<p class=\"calc\">Each extra $1,000 loses 100 seats → slope −0.1\nSeats = −0.1 × Price + 300\nCheck: Price $1,000 → 200 seats ✓</p>",
+  stuck:["\"How many seats do you lose for each $1,000 increase?\"","\"Try writing seats = a × price + b.\""]},
+ {name:"Best price", time:"5 min",
+  say:["Costs are $10,000 fixed, plus $500 per seat sold. What price maximizes profit?"],
+  listen:["Profit = −0.1P² + 350P − 160,000","Uses calculus (derivative = 0) or the vertex of the curve","Gets $1,750"],
+  key:"<p class=\"calc\">Revenue = P × (−0.1P + 300) = −0.1P² + 300P\nCosts = 10,000 + 500 × (−0.1P + 300) = 160,000 − 50P\nProfit = −0.1P² + 350P − 160,000\nBest: −0.2P + 350 = 0 → P = $1,750</p><p>If they test prices instead (e.g. $1,500, $1,750, $2,000) and find $1,750, that's also fine.</p>",
+  stuck:["\"Write revenue using price only.\"","\"Profit goes up then down. Where's the top?\""]},
+ {name:"Close", time:"1–2 min",
+  say:["What do you tell the airline?"],
+  listen:["Price $1,750, sells 125 seats","Profit ≈ $146k","Notices 175 empty seats: suggests extra fees or different price tiers"],
+  key:"<p class=\"calc\">Seats: −0.1 × 1,750 + 300 = 125\nRevenue: 1,750 × 125 = $218,750\nCosts: 10,000 + 500 × 125 = $72,500\nProfit ≈ $146,250</p>"}
+ ]},
+
+{id:"energy", title:"Energy Consumption", type:"Discussion", diff:"Hard", mins:20,
+ plain:"A Gulf government wants to cut how much energy the country uses. There's no math: the candidate brainstorms in an organized way, sector by sector.",
+ bottom:"There's no single number. A strong answer covers <b>4 sectors</b> (homes and offices, industry, transport) with <b>price</b>, <b>efficiency</b> and <b>behavior</b> ideas for each.",
+ steps:[
+ {name:"Read the prompt", time:"1 min",
+  say:["The ministry of energy of a Gulf country has hired you to design a program to reduce the country's overall energy consumption. How do you approach the problem?"],
+  asks:[["Is there a target, like a %?","No specific target. We want a program."],["Do we have data on which sectors use most?","No numbers for this case. It's a discussion."],["Any budget limits?","Not for now."]],
+  listen:["Asks about a target or timeline"]},
+ {name:"Framework", time:"3 min",
+  say:["How would you structure the program?"],
+  listen:["Splits by who uses energy: homes, businesses/entertainment, industry, transport","Ways to reduce use in each","Feasibility (technology, expertise)","Costs vs. benefits (incl. cleaner air, CO₂)"],
+  key:"<p>After they explain, say: \"To save time, let's skip feasibility and costs. Just give me ideas to reduce consumption, sector by sector.\"</p>",
+  stuck:["\"Who uses energy in a country?\""]},
+ {name:"Homes, offices, entertainment", time:"3 min",
+  say:["To save time, let's skip feasibility and cost. How would you cut energy use in homes, offices and entertainment venues?"],
+  listen:["Raise electricity price","Subsidize efficient appliances","Sensors that switch off lights","Fewer unnecessary lights","Shared / more efficient cooling systems"],
+  key:"<p>3 or more good ideas = good. Bonus if they group them (price / technology / behavior).</p>"},
+ {name:"Industry", time:"2 min",
+  say:["What about industry?"],
+  listen:["Raise electricity price","Taxes or rules for big energy users","Subsidize efficient machines","Shorter operating hours","Reward companies that research energy savings"]},
+ {name:"Transport", time:"2 min",
+  say:["And transportation?"],
+  listen:["Raise fuel prices","Make cars / licenses more expensive","Higher tolls","Car-pooling","Public transport","Electric car charging stations"]},
+ {name:"Close", time:"1–2 min",
+  say:["Summarize your program for the minister in under a minute."],
+  listen:["Organized summary, not a list of 15 ideas","Groups ideas: price, efficiency, behavior","Next step: measure which sector uses most, start there"]}
+ ]},
+
+{id:"bank", title:"KSA Retail Bank", type:"Profitability", diff:"Hard", mins:25,
+ plain:"A big Saudi bank's revenue has been falling for 2 years. The candidate finds which part of the business is shrinking, then sizes a fix: selling credit cards to customers who already have loans.",
+ bottom:"The problem is <b>Category 1</b> (personal loans and credit cards). Fix: cross-selling, worth <b>$5.25M</b> one way and <b>$24M total</b> both ways.",
+ steps:[
+ {name:"Read the prompt + give the data", time:"2 min",
+  say:["Our client is one of the largest retail banks in Saudi Arabia. Their revenues have been declining for the past two years. They've hired us to find the reason and give them a solution.","Here's how their revenue is split."],
+  give:{when:"Right away, with the prompt. (In this case the data comes first.)", html:`<div class="tw"><table class="data"><tr><th></th><th>Cat. 1: Personal loans and credit cards</th><th>Cat. 2: Car loans</th><th>Cat. 3: House loans</th></tr><tr><td>2 years ago</td><td>55%</td><td>28%</td><td>17%</td></tr><tr><td>Now</td><td>50%</td><td>30%</td><td>20%</td></tr></table></div>`},
+  asks:[["How much did revenue drop?","We don't have the exact figure. Work with the split."],["Are competitors affected too?","Put that in your framework."]],
+  listen:["Notices the percentages are shares of a shrinking total"]},
+ {name:"Framework", time:"3 min",
+  say:["How would you structure this?"],
+  listen:["External: economy, interest rates, regulations, competitors","Internal: revenue streams, prices/fees, number of customers, product mix"],
+  key:"<p>After they explain, say: \"The problem is only internal.\"</p>"},
+ {name:"Find the problem", time:"3 min",
+  say:["The problem is only internal. Which category is causing the decline? And what can you say about the other two?"],
+  listen:["Category 1: its share fell AND the total fell, so it definitely shrank","Categories 2 and 3: can't tell. Bigger share of a smaller total could go either way"],
+  key:"<p>The trap: thinking 2 and 3 grew. They only grew as a <b>share</b>. Without the total, we can't know.</p>",
+  stuck:["\"If the total shrank, did Category 1 shrink in dollars?\"","\"Car loans went from 28% to 30%, but of a smaller total. Did they grow?\""]},
+ {name:"How to grow Category 1", time:"3 min",
+  say:["How could the bank grow Category 1? Is it easier to sell more to current customers, or to win new ones?"],
+  listen:["Current customers are easier: people rarely switch banks","Mentions cross-selling: credit cards to loan customers and the reverse"],
+  key:"<p>Then say: \"Let's size one idea: selling credit cards to customers who only have a personal loan.\"</p>"},
+ {name:"Size the cross-sell", time:"5–6 min",
+  say:["Let's size selling credit cards to customers who only have a personal loan. How much yearly revenue would that add?"],
+  give:{when:"Right away, with the question.", html:"<ul><li>500,000 customers in Category 1: <b>30%</b> personal loans only, <b>50%</b> credit cards only, <b>20%</b> both</li><li>Only <b>10%</b> of loan-only customers are interested in a card</li><li>Each customer spends <b>$20,000</b> a year on average</li><li><b>5%</b> of customers miss their card payments (default)</li><li>Card fees: <b>$250</b> per year, plus a <b>10%</b> charge for customers who default</li></ul>"},
+  listen:["Loan-only = 150,000 → interested = 15,000","Annual fees = $3.75M","Default charges = 15,000 × 5% × $20,000 × 10% = $1.5M","Total = $5.25M"],
+  key:"<p class=\"calc\">15,000 × $250 = $3.75M\n15,000 × 5% × $20,000 × 10% = $1.5M\nTotal = $5.25M per year</p>",
+  stuck:["\"How many customers have only a personal loan?\"","\"There are two fees. Do them one at a time.\""]},
+ {name:"Close", time:"2 min",
+  say:["Selling loans to card holders brings another $18.75 million. What's the total, and what do you recommend?"],
+  listen:["Total = $24M","Recommends cross-selling both ways","Says to also investigate Categories 2 and 3"]}
+ ]},
+
+{id:"crypto", title:"Lebanese Cryptocurrency", type:"Market entry", diff:"Medium", mins:20,
+ plain:"A startup wants to launch a digital currency for Lebanon. The candidate estimates how many people would use it and how much money it makes.",
+ bottom:"About <b>240,000 users</b>, <b>624,000 transactions a week</b>, and <b>$61,200 profit per week</b> (≈ $3.2M a year).",
+ steps:[
+ {name:"Read the prompt", time:"1–2 min",
+  say:["Our client is a startup that wants to create a cryptocurrency to be used in Lebanon. They've hired you to find out if this is a good idea."],
+  asks:[["Does the client have the skills / money?","Yes, they have the expertise and the funding."],["Who are the competitors?","One major competitor: Bitcoin, with 60% of the market. The other 40% is up for grabs."],["How does the coin make money?","Transaction fees. I'll give you details later."]],
+  listen:["Asks about competition","Asks how the coin makes money"]},
+ {name:"Framework", time:"2–3 min",
+  say:["What's your framework?"],
+  listen:["Client: skills, money","Market: size, competitors, legal barriers","Profitability: revenue (fees × transactions) and costs"],
+  key:"<p>After they explain, say: \"The client has the expertise and money, and Bitcoin has 60%. Let's estimate the market.\"</p>"},
+ {name:"How many users?", time:"4 min",
+  say:["Estimate the crypto market in Lebanon. How many people could use our coin?"],
+  give:{when:"When they ask about population or who uses crypto.", html:`<p>Lebanon has about <b>6 million</b> people, spread evenly from age 0 to 80.</p><div class="tw"><table class="data"><tr><th>Age</th><th>0–20</th><th>21–40</th><th>41–60</th><th>61–80</th></tr><tr><td>% into crypto</td><td>10%</td><td>25%</td><td>5%</td><td>0%</td></tr></table></div>`},
+  listen:["1.5M people per age group","150k + 375k + 75k = 600k into crypto","× 40% open market = 240k users"],
+  key:"<p class=\"answerline\">600k into crypto × 40% = <b>240,000 potential users</b>.</p>",
+  stuck:["\"How many people are in each age group?\"","\"Bitcoin holds 60%. How much is left for us?\""]},
+ {name:"Transactions", time:"3 min",
+  say:["How many transactions per week would they make?"],
+  give:{when:"When they ask about usage or income.", html:`<div class="tw"><table class="data"><tr><th>Income level</th><th>% of people</th><th>Transactions per week</th></tr><tr><td>High</td><td>10%</td><td>7</td></tr><tr><td>Medium</td><td>50%</td><td>3</td></tr><tr><td>Low</td><td>40%</td><td>1</td></tr></table></div>`},
+  listen:["168k + 360k + 96k","= 624,000 transactions per week"],
+  key:"<p class=\"calc\">240k × 10% × 7 = 168k\n240k × 50% × 3 = 360k\n240k × 40% × 1 = 96k\nTotal = 624k per week</p>"},
+ {name:"Profit", time:"4 min",
+  say:["Here's how the coin charges. What's the weekly profit?"],
+  give:{when:"Right away.", html:`<ul><li>A fixed charge of <b>$0.50</b> on every transaction</li><li>Plus a commission:</li></ul><div class="tw"><table class="data"><tr><th>Transaction size</th><th>Commission</th><th>% of transactions</th></tr><tr><td>$0–10k</td><td>$0.60</td><td>50%</td></tr><tr><td>$10k–100k</td><td>$0.40</td><td>40%</td></tr><tr><td>Over $100k</td><td>$0.20</td><td>10%</td></tr></table></div><ul><li>Profit margin: <b>10%</b></li></ul>`},
+  listen:["Fixed fees = $312k","Average commission $0.48 → ≈ $300k","Revenue ≈ $612k per week","Profit = 10% ≈ $61,200 per week"],
+  key:"<p class=\"calc\">$0.50 × 624k = $312k\n(0.5×0.60 + 0.4×0.40 + 0.1×0.20) = $0.48 × 624k ≈ $300k\nRevenue ≈ $612k → Profit ≈ $61.2k per week</p>"},
+ {name:"Why only 10%?", time:"2 min",
+  say:["Why do you think the profit margin is only 10%?"],
+  listen:["Expensive setup: licenses, servers, cooling","Cost of processing transactions on the blockchain","Expensive to win users away from Bitcoin"]},
+ {name:"Close", time:"1 min",
+  say:["What's your recommendation?"],
+  listen:["Looks profitable: ~$61k/week (~$3.2M/year)","Risk: new competitors shrink our 40%","Next: compare setup cost with profit (payback), and cut costs"]}
+ ]},
+
+{id:"hair", title:"Hair Loss Pill", type:"Profitability", diff:"Medium", mins:20,
+ plain:"A company invented a single pill that cures hair loss. The candidate sets a price and estimates first-year revenue in Lebanon.",
+ bottom:"Price around <b>$7,500</b> (1.5–2× a hair transplant). About 220,000 people can afford it, 20% buy in year one → <b>$330 million</b>.",
+ steps:[
+ {name:"Read the prompt", time:"1–2 min",
+  say:["Our client has created a pill that reverses hair loss. They want to sell it in Lebanon and have hired you to estimate the first year's revenue."],
+  asks:[["How many pills does someone need?","Just one pill cures a person."],["Any competitors?","No direct competitors. But hair treatments and transplants compete on price."],["What do alternatives cost?","A hair transplant costs about $5,000 on average."]],
+  listen:["Asks how many pills are needed","Asks about alternatives / competitors"]},
+ {name:"Framework", time:"2 min",
+  say:["How would you structure this?"],
+  listen:["Revenue = price × number of buyers","Price: based on value, cost, or competitors","Buyers: how many people have hair loss, who can afford it"]},
+ {name:"Price", time:"3 min",
+  say:["Let's start with price. What would you charge for one pill, and why?"],
+  listen:["Compares to the $5,000 transplant","Argues one pill = lifetime cure = high value","Lands around $7,500–$10,000"],
+  key:"<p>Expected range: <b>$7,500–$10,000</b> (1.5–2× a transplant). Anything with a clear reason is acceptable. For the rest of the case, say: \"Let's use $7,500.\"</p>",
+  stuck:["\"What do people pay today to fix hair loss?\""]},
+ {name:"How many interested", time:"4 min",
+  say:["Let's use $7,500. Now, how many people in Lebanon would want this pill?"],
+  give:{when:"When they ask about population or who suffers from hair loss.", html:`<div class="tw"><table class="data"><tr><th>Age</th><th>Men</th><th>% interested</th><th>Women</th><th>% interested</th></tr><tr><td>0–20</td><td>0.75M</td><td>0%</td><td>0.75M</td><td>0%</td></tr><tr><td>21–40</td><td>0.75M</td><td>20%</td><td>0.75M</td><td>0%</td></tr><tr><td>41–60</td><td>0.75M</td><td>50%</td><td>0.75M</td><td>5%</td></tr><tr><td>61–80</td><td>0.75M</td><td>40%</td><td>0.75M</td><td>20%</td></tr></table></div>`},
+  listen:["Includes women, not just men","Men 825k + women 187.5k","≈ 1 million interested (rounds to 1M)"],
+  key:"<p class=\"calc\">Men: 150k + 375k + 300k = 825k\nWomen: 37.5k + 150k = 187.5k\nTotal ≈ 1.01M → round to 1M</p>"},
+ {name:"Who can afford it", time:"3 min",
+  say:["Can all of them afford it?"],
+  give:{when:"When they bring up income.", html:`<div class="tw"><table class="data"><tr><th>Income</th><th>% of people</th><th>% who can afford it</th></tr><tr><td>High</td><td>10%</td><td>100%</td></tr><tr><td>Medium</td><td>40%</td><td>30%</td></tr><tr><td>Low</td><td>50%</td><td>0%</td></tr></table></div>`},
+  listen:["100k + 120k = 220,000 can afford it"],
+  key:"<p class=\"calc\">1M × 10% × 100% = 100k\n1M × 40% × 30% = 120k\nTotal = 220k</p>",
+  stuck:["\"Is $7,500 affordable for everyone in Lebanon?\""]},
+ {name:"Year-one revenue", time:"3 min",
+  say:["Will all 220,000 buy it in the first year?"],
+  listen:["Says no: only early adopters buy in year one","220k × 20% × $7,500 = $330M"],
+  give:{when:"Once they say not everyone will buy right away.", html:"<p>Assume <b>20%</b> (early adopters) buy in year one.</p>"},
+  key:"<p class=\"answerline\">220k × 20% × $7,500 = <b>$330 million</b></p>",
+  stuck:["\"Do new products get bought by everyone in year one?\""]},
+ {name:"Close", time:"2 min",
+  say:["$330 million. Is this a profitable idea?"],
+  listen:["Revenue isn't profit: development costs were likely huge","The price might be too high if results equal a transplant","Answer is clear and structured"]}
+ ]}
+];
+
+const FIT = [
+ ["Tell me about yourself.","A 1–2 minute story, not a CV list: studies, 1–2 experiences, why consulting, one personal detail that makes them memorable."],
+ ["Why consulting?","Specific reasons tied to their own experience (problem-solving, variety, learning). Shows they know what the job really is."],
+ ["Why our firm?","Names something specific: people they've met, a program, values. Not just \"prestige\"."],
+ ["Give me an example of leadership.","A real situation, what THEY did and why, the result, and what they learned. Admits a shortcoming."],
+ ["What are your three biggest weaknesses?","Real weaknesses, not humble-brags, each with what they're doing to improve."],
+ ["Tell me about a time you challenged yourself.","A clear challenge, the steps they took, the outcome."],
+ ["Why should we give you an offer?","2–3 confident reasons linked to what consultants actually do."],
+ ["Why aren't you working in the field of your major?","A positive story about moving toward consulting, not running away from their major."]
+];
+
+const DIMS=[["Structure","Clear, tailored framework?"],["Math","Correct, clean, said out loud?"],["Business sense","Found the insight, said \"so what\"?"],["Communication","Answer-first, clear, confident?"],["Drive","Led the case; few hints needed?"]];
+
+/* ===================== RENDER ===================== */
+const KEY="interviewer-binder-v1";
+let st={};try{st=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){st={}}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
+
+function caseHTML(c,ci){
+  const s=st[c.id]||{};
+  let h=`<div class="eyebrow">Case ${ci+1} of ${CASES.length}</div><h2>${c.title}</h2>
+  <div class="meta"><span class="chip">${c.type}</span><span class="chip">${c.diff}</span><span class="chip">~${c.mins} min</span></div>
+  <div class="panel"><h4>What this case is about (read this yourself)</h4><p>${c.plain}</p></div>
+  <div class="blk key"><span class="tag">The answer in one line, don't show</span><p>${c.bottom}</p></div>`;
+  c.steps.forEach((p,i)=>{
+    h+=`<section class="step"><div class="stephead"><h3><span class="stepno">${i+1}</span>${p.name}</h3><span class="t">${p.time}</span></div>`;
+    h+=`<div class="blk say"><span class="tag">Say</span>${p.say.map(l=>`<p class="line">"${l}"</p>`).join("")}</div>`;
+    if(p.asks)h+=`<div class="blk plain"><span class="tag">If they ask… you answer</span><div class="tw"><table class="asks">${p.asks.map(a=>`<tr><td>${a[0]}</td><td>"${a[1]}"</td></tr>`).join("")}<tr><td>Anything else</td><td>"Not important for this case. Make an assumption."</td></tr></table></div></div>`;
+    if(p.give)h+=`<div class="blk give"><span class="tag">Give only when: ${p.give.when}</span>${p.give.html}</div>`;
+    if(p.listen)h+=`<div class="blk plain"><span class="tag">Listen for: tick what you hear</span><ul class="check">${p.listen.map((l,j)=>{const id=`${c.id}-${i}-${j}`;return `<li><label><input type="checkbox" id="ck-${id}" data-ck="${id}" ${s.ck&&s.ck[id]?"checked":""}><span>${l}</span></label></li>`}).join("")}</ul></div>`;
+    if(p.key)h+=`<div class="blk key"><span class="tag">Answer key, don't show</span>${p.key}</div>`;
+    if(p.stuck)h+=`<div class="blk flag"><span class="tag">If they're stuck: one hint at a time</span><ol>${p.stuck.map(x=>`<li>${x}</li>`).join("")}</ol></div>`;
+    h+=`</section>`;
+  });
+  h+=`<section class="step score"><h3>Score this case</h3><p class="muted">Use the ticks above and the <a href="#rubric" data-go="rubric">rubric</a>. 3 = would pass.</p>
+  ${DIMS.map(([d,hint])=>`<div class="srow"><b>${d}</b><div class="dots" role="group" aria-label="${d}">${[1,2,3,4,5].map(n=>`<button data-score="${c.id}|${d}" data-n="${n}" aria-pressed="${!!(s.sc&&s.sc[d]===n)}">${n}</button>`).join("")}</div><small>${hint}</small></div>`).join("")}
+  <p>Total: <span class="total" id="tot-${c.id}">${total(c.id)}</span> / 25</p>
+  <label for="fb-${c.id}"><h4>2 strengths · 2 things to fix</h4></label><textarea id="fb-${c.id}" data-fb="${c.id}" placeholder="Strength: … / Fix: …">${(s.fb||"").replace(/</g,"&lt;")}</textarea>
+  <div class="noprint row" style="display:flex;gap:8px"><button data-clear="${c.id}">Clear ticks and scores for a re-run</button></div></section>
+  <div class="navrow"><button data-go="${ci?CASES[ci-1].id:"cases"}">← ${ci?CASES[ci-1].title:"All cases"}</button><button data-go="${ci<CASES.length-1?CASES[ci+1].id:"fit"}">${ci<CASES.length-1?CASES[ci+1].title:"Fit questions"} →</button></div>`;
+  return h;
+}
+function total(id){const sc=(st[id]||{}).sc||{};const v=Object.values(sc);return v.length?v.reduce((a,b)=>a+b,0):"–"}
+
+const casesIndex=`<div class="eyebrow">Pick one</div><h2>The cases</h2><p class="lead">Start with an Easy case. Read the script once on your own before you begin. Each takes 15–25 minutes plus 5 minutes of feedback.</p>
+<div class="toc">${CASES.map(c=>`<button data-go="${c.id}"><b>${c.title}</b><span class="muted">${c.type} · ${c.diff} · ~${c.mins} min</span></button>`).join("")}</div>
+<div class="navrow"><button data-go="glossary">← Glossary</button><button data-go="${CASES[0].id}">${CASES[0].title} →</button></div>`;
+
+const fitHTML=`<div class="eyebrow">Optional warm-up, 5–10 minutes</div><h2>Fit questions</h2><p class="lead">Real interviews often start with 2–3 personal questions before the case. Ask one or two. Good answers last 1–2 minutes and tell a story.</p>
+<div class="panel tw"><table class="asks"><tr><th>Ask</th><th>A good answer…</th></tr>${FIT.map(f=>`<tr><td style="font-family:var(--display);font-size:1.05rem;color:var(--ink)">"${f[0]}"</td><td style="font-family:var(--body);font-size:.92rem">${f[1]}</td></tr>`).join("")}</table></div>
+<div class="panel"><h3>Red flags in fit answers</h3><ul><li>Over 2 minutes long</li><li>Sounds memorized word for word</li><li>Lists facts from the CV with no story</li><li>Can't say why consulting specifically</li></ul></div>
+<div class="navrow"><button data-go="${CASES[CASES.length-1].id}">← ${CASES[CASES.length-1].title}</button><button data-go="start">Back to start</button></div>`;
+
+const SECTIONS=[...GUIDE.map(g=>({id:g.id,nav:g.nav,html:g.html})),{id:"cases",nav:"All cases",html:casesIndex},...CASES.map((c,i)=>({id:c.id,nav:`Case ${i+1}: ${c.title}`,html:caseHTML(c,i)})),{id:"fit",nav:"Fit questions",html:fitHTML}];
+const book=document.getElementById("book");
+book.innerHTML=SECTIONS.map(s=>`<section class="sec" id="${s.id}">${s.html}</section>`).join("");
+const jump=document.getElementById("jump");
+jump.innerHTML=SECTIONS.map(s=>`<option value="${s.id}">${s.nav}</option>`).join("");
+function show(id){if(!document.getElementById(id))id="start";document.querySelectorAll(".sec").forEach(x=>x.classList.toggle("on",x.id===id));jump.value=id;try{localStorage.setItem(KEY+"-sec",id)}catch(e){}window.scrollTo(0,0)}
+jump.addEventListener("change",()=>show(jump.value));
+book.addEventListener("click",e=>{
+  const g=e.target.closest("[data-go]");if(g){e.preventDefault();return show(g.dataset.go)}
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.score){const [id,d]=b.dataset.score.split("|");st[id]=st[id]||{};st[id].sc=st[id].sc||{};st[id].sc[d]=+b.dataset.n;
+    b.parentElement.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));document.getElementById("tot-"+id).textContent=total(id);save()}
+  if(b.dataset.clear){const id=b.dataset.clear;if(b.dataset.armed!=="1"){b.dataset.armed="1";b.textContent="Tap again to clear";return}
+    delete st[id];save();const sec=document.getElementById(id);const ci=CASES.findIndex(c=>c.id===id);sec.innerHTML=caseHTML(CASES[ci],ci)}
+});
+book.addEventListener("change",e=>{const t=e.target;if(t.dataset.ck){const id=t.dataset.ck.split("-")[0];st[id]=st[id]||{};st[id].ck=st[id].ck||{};st[id].ck[t.dataset.ck]=t.checked;save()}});
+book.addEventListener("input",e=>{const t=e.target;if(t.dataset.fb){st[t.dataset.fb]=st[t.dataset.fb]||{};st[t.dataset.fb].fb=t.value;save()}});
+let start="start";const h=location.hash.slice(1);if(h&&document.getElementById(h))start=h;else{try{start=localStorage.getItem(KEY+"-sec")||"start"}catch(e){}}
+show(start);
+</script>
