@@ -128,6 +128,7 @@ th{font-weight:600}
 .addnode:hover{color:var(--accent)}
 .addtag{display:inline-block;font-family:var(--body);font-size:.64rem;letter-spacing:.07em;text-transform:uppercase;font-weight:700;padding:1px 7px;border-radius:999px;border:1px solid currentColor;color:var(--warn);margin-left:6px;vertical-align:middle;font-style:normal}
 .addnote{font-family:var(--body);font-size:.8rem;color:var(--muted);font-style:italic;margin-top:6px}
+.hidebtn{margin-left:8px;padding:1px 9px;font-size:.72rem;letter-spacing:0;text-transform:none;font-weight:500;color:inherit;border-color:currentColor;opacity:.75;background:transparent}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chips button{border-radius:999px;font-size:.88rem}
 .chips button.asked{background:var(--iv);color:var(--muted)}
@@ -167,7 +168,12 @@ const KEY="case-room-v2";
 let store={};
 try{store=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){store={}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
-function cs(id){store[id]=store[id]||{step:0,asked:[],ans:{},num:{},seen:{},scores:{},done:false,notes:"",secs:0};return store[id]}
+/* Revealed answers, hints, data and clarifying answers are kept in memory only, so a refresh hides them again. */
+const reveal={};
+function rv(id){return reveal[id]||(reveal[id]={seen:{},asked:[]})}
+for(const k in store){if(store[k]){delete store[k].seen;delete store[k].asked}}
+try{localStorage.removeItem(KEY+"-iv")}catch(e){}
+function cs(id){store[id]=store[id]||{step:0,ans:{},num:{},scores:{},done:false,notes:"",secs:0};return store[id]}
 
 /* ---------- number parsing ---------- */
 function parseNum(s){
@@ -207,7 +213,6 @@ const addTag=k=>k?`<span class="addtag" title="Not in ${SRC}">${k==="partly"?"Pa
 const addNote=(txt)=>txt?`<p class="addnote">Beyond ${SRC}: ${txt}</p>`:"";
 /* ---------- app state ---------- */
 let view={name:"home"}, filter="All", ivMode=false, tick=null, fitTick=null;
-try{ivMode=localStorage.getItem(KEY+"-iv")==="1"}catch(e){}
 let theme="light";try{theme=localStorage.getItem(KEY+"-theme")||"light"}catch(e){}
 document.documentElement.setAttribute("data-theme",theme);
 const app=document.getElementById("app");
@@ -219,7 +224,7 @@ function go(v){view=v;clearInterval(tick);clearInterval(fitTick);render();window
 
 function topBar(){
   return `<div class="top"><span class="brand">Case Room</span>
-  <div class="row"><button class="small" data-themetoggle>${theme==="dark"?"Light mode":"Dark mode"}</button><label class="toggle"><input type="checkbox" id="ivmode" ${ivMode?"checked":""}> Interviewer mode (show all answers)</label></div></div>`;
+  <div class="row"><button class="small" data-themetoggle>${theme==="dark"?"Light mode":"Dark mode"}</button><label class="toggle"><input type="checkbox" id="ivmode" ${ivMode?"checked":""}> Interviewer mode (shows all answers until refresh)</label></div></div>`;
 }
 
 function renderHome(){
@@ -250,9 +255,9 @@ function renderHome(){
 function stepHTML(c,s,i,isCurrent){
   const st=c.steps[i];
   const k=String(i);
-  const seenData=ivMode||s.seen["d"+k], seenAns=ivMode||s.seen["a"+k];
+  const r=rv(c.id), seenData=ivMode||r.seen["d"+k], seenAns=ivMode||r.seen["a"+k];
   const nv=s.num[k]||"";
-  const hints=s.seen["h"+k]||0;
+  const hints=r.seen["h"+k]||0;
   let v="";
   if(st.num&&nv){const [cls,msg]=judge(st.num,parseNum(nv));v=`<span class="verdict ${cls}">${msg}</span>`}
   return `<div class="turn ${isCurrent?"new":""}">
@@ -267,9 +272,9 @@ function stepHTML(c,s,i,isCurrent){
        ${!seenAns?`<button class="small ghost" data-reveal="a${k}">Show model answer</button>`:""}
      </div>
    </div>
-   ${hints&&!seenAns?`<div class="iv"><span class="who">Interviewer · hint</span><div class="say">${st.stuck.slice(0,hints).map(h=>`<p>${h}</p>`).join("")}</div></div>`:""}
-   ${st.give&&seenData?`<div class="data"><span class="lbl">Interviewer hands you</span>${st.give.html}</div>`:""}
-   ${seenAns?`<div class="answer"><span class="lbl">Model answer</span>${st.key||""}${st.listen?`<p><b>A strong answer covers:</b></p><ul>${st.listen.map(l=>`<li>${l}</li>`).join("")}</ul>`:""}</div>`:""}
+   ${hints&&!seenAns?`<div class="iv"><span class="who">Interviewer · hint ${ivMode?"":`<button class="small ghost hidebtn" data-hide="h${k}">Hide</button>`}</span><div class="say">${st.stuck.slice(0,hints).map(h=>`<p>${h}</p>`).join("")}</div></div>`:""}
+   ${st.give&&seenData?`<div class="data"><span class="lbl">Interviewer hands you ${ivMode?"":`<button class="small ghost hidebtn" data-hide="d${k}">Hide</button>`}</span>${st.give.html}</div>`:""}
+   ${seenAns?`<div class="answer"><span class="lbl">Model answer ${ivMode?"":`<button class="small ghost hidebtn" data-hide="a${k}">Hide</button>`}</span>${st.key||""}${st.listen?`<p><b>A strong answer covers:</b></p><ul>${st.listen.map(l=>`<li>${l}</li>`).join("")}</ul>`:""}</div>`:""}
   </div>`;
 }
 
@@ -280,8 +285,8 @@ function renderCase(){
   let turns=`<div class="turn"><div class="iv"><span class="who">Interviewer</span><div class="say">${c.prompt.map(l=>`<p>${l}</p>`).join("")}<p><i>What questions do you have before you start?</i></p></div>${addNote((ADD[c.id]||{}).prompt)}</div>
    <div class="you"><label class="youlbl" for="ans-${c.id}-q">Your clarifying questions</label>
    <textarea id="ans-${c.id}-q" data-ans="q" placeholder="Write your own questions first…">${esc(s.ans.q||"")}</textarea>
-   <div class="chips">${c.clarify.map((q,j)=>`<button class="${s.asked.includes(j)||ivMode?"asked":""}" data-ask="${j}">${q[0]}${addClar(c,j)?addTag("added"):""}</button>`).join("")}</div></div>
-   ${c.clarify.map((q,j)=>(s.asked.includes(j)||ivMode)?`<div class="iv"><span class="who">Interviewer · ${esc(q[0])}${addClar(c,j)?addTag("added"):""}</span><p>${q[1]}</p></div>`:"").join("")}
+   <div class="chips">${c.clarify.map((q,j)=>`<button class="${rv(c.id).asked.includes(j)||ivMode?"asked":""}" data-ask="${j}">${q[0]}${addClar(c,j)?addTag("added"):""}</button>`).join("")}</div></div>
+   ${c.clarify.map((q,j)=>(rv(c.id).asked.includes(j)||ivMode)?`<div class="iv"><span class="who">Interviewer · ${esc(q[0])}${addClar(c,j)?addTag("added"):""}</span><p>${q[1]}</p></div>`:"").join("")}
   </div>`;
   for(let i=0;i<shown;i++)turns+=stepHTML(c,s,i,i===shown-1);
   const finished=shown>=total;
@@ -353,17 +358,19 @@ app.addEventListener("click",e=>{
   if("fit"in d){let n;do{n=Math.floor(Math.random()*FIT.length)}while(view.name==="fit"&&n===view.q&&FIT.length>1);return go({name:"fit",q:n})}
   if(view.name!=="case")return;
   const c=CASES.find(x=>x.id===view.id), s=cs(c.id);
-  if("ask"in d){const j=+d.ask;if(!s.asked.includes(j))s.asked.push(j)}
+  const r=rv(c.id);
+  if("ask"in d){const j=+d.ask;if(!r.asked.includes(j))r.asked.push(j)}
   else if("next"in d){s.step=Math.min(s.step+1,c.steps.length)}
-  else if("reveal"in d){s.seen[d.reveal]=true}
+  else if("reveal"in d){r.seen[d.reveal]=true}
+  else if("hide"in d){delete r.seen[d.hide]}
   else if("tadd"in d){pendingFocus=treeAct(s,c.id,"add",d.tadd)}
   else if("tdel"in d){treeAct(s,c.id,"del",d.tdel)}
-  else if("hint"in d){s.seen["h"+d.hint]=(s.seen["h"+d.hint]||0)+1}
+  else if("hint"in d){r.seen["h"+d.hint]=(r.seen["h"+d.hint]||0)+1}
   else if("check"in d){const inp=document.getElementById(`num-${c.id}-${d.check}`);s.num[d.check]=inp.value;const [cls,msg]=judge(c.steps[+d.check].num,parseNum(inp.value));document.getElementById("v-"+d.check).innerHTML=`<span class="verdict ${cls}">${msg}</span>`;save();return}
   else if("score"in d){s.scores[d.score]=+d.n}
   else if("done"in d){s.done=true}
   else if("pause"in d){view.paused=!view.paused}
-  else if("reset"in d){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Tap again to erase your answers";return}delete store[c.id];save();return go({name:"case",id:c.id})}
+  else if("reset"in d){if(b.dataset.confirm!=="1"){b.dataset.confirm="1";b.textContent="Tap again to erase your answers";return}delete store[c.id];delete reveal[c.id];save();return go({name:"case",id:c.id})}
   save();
   const y=window.scrollY;renderCase();
   if("next"in d){const turns=app.querySelectorAll(".turn");turns[turns.length-1]?.scrollIntoView({behavior:"smooth",block:"start"})}else window.scrollTo(0,y);
@@ -371,7 +378,7 @@ app.addEventListener("click",e=>{
 });
 app.addEventListener("input",e=>{
   const t=e.target;
-  if(t.id==="ivmode"){ivMode=t.checked;try{localStorage.setItem(KEY+"-iv",ivMode?"1":"0")}catch(er){}const y=window.scrollY;render();window.scrollTo(0,y);return}
+  if(t.id==="ivmode"){ivMode=t.checked;const y=window.scrollY;render();window.scrollTo(0,y);return}
   if(view.name!=="case")return;
   const s=cs(view.id);
   if(t.dataset.ans!=null)s.ans[t.dataset.ans]=t.value;
