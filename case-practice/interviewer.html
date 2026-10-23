@@ -125,6 +125,7 @@ textarea{font:inherit;width:100%;min-height:70px;border:1px solid var(--line);bo
   <span class="brand">Interviewer's Binder</span>
   <label for="jump" class="muted" style="font-size:.85rem">Go to</label>
   <select id="jump"></select>
+  <button id="themebtn" type="button">Dark mode</button>
 </div></nav>
 <main class="wrap" id="book"></main>
 
@@ -266,6 +267,10 @@ const DIMS=[["Structure","Clear, tailored framework?"],["Math","Correct, clean, 
 
 /* ===================== RENDER ===================== */
 const KEY="interviewer-binder-v2";
+let theme="light";try{theme=localStorage.getItem(KEY+"-theme")||"light"}catch(e){}
+function applyTheme(){document.documentElement.setAttribute("data-theme",theme);document.getElementById("themebtn").textContent=theme==="dark"?"Light mode":"Dark mode"}
+applyTheme();
+document.getElementById("themebtn").addEventListener("click",()=>{theme=theme==="dark"?"light":"dark";try{localStorage.setItem(KEY+"-theme",theme)}catch(e){}applyTheme()});
 let st={};try{st=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){st={}}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
 
