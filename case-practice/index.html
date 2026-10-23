@@ -90,7 +90,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .verdict{font-size:.88rem;font-weight:600}
 .verdict.good{color:var(--good)} .verdict.close{color:var(--warn)} .verdict.bad{color:var(--bad)}
 .unit{font-size:.82rem;color:var(--muted)}
-.data{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:6px;padding:12px 16px;display:grid;gap:8px}
+div.data{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:6px;padding:12px 16px;display:grid;gap:8px}
 .answer{background:var(--hl);color:var(--hl-ink);border-radius:6px;padding:12px 16px;display:grid;gap:8px}
 .answer .lbl,.data .lbl{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;opacity:.8}
 .answer ul,.data ul{margin:0;padding-left:18px}
@@ -122,325 +122,9 @@ th{font-weight:600}
 
 <div class="wrap" id="app"></div>
 
+<script src="cases.js"></script>
 <script>
-const CASES = [
-{
-  id:"diapers", title:"Diapers in KSA", type:"Market Sizing", diff:"Easy",
-  prompt:"Estimate the market size of diapers in KSA.",
-  style:"Interviewee-led. Make your own estimates first. Ask for the interviewer's numbers only after you've committed to yours.",
-  clarify:[
-    {q:"Do we include adult diapers?", a:"Yes, elderly people are included."},
-    {q:"Cloth or disposable?", a:"Only disposable diapers."},
-    {q:"Market size by value or by volume?", a:"By sales value, in dollars, not by volume."},
-    {q:"Over what time period?", a:"Give me an annual figure."}
-  ],
-  steps:[
-    {ask:"How would you approach this? Walk me through your structure before any numbers.",
-     answer:`<p>Supply-side doesn't help here. Go demand-side and segment the population by age:</p>
-<ul><li>Population → people per age year (population ÷ life expectancy)</li><li>Users: babies 0–3 and elderly (e.g. 75–80) with a usage % per group</li><li>Diapers per user per day → daily diapers → yearly diapers</li><li>× price per diaper → $ market size</li></ul>`},
-    {ask:"Good. What numbers will you use for KSA's population and life expectancy? How many people does that give you per age year?",
-     num:{value:437500, tol:.1, unit:"people per age year"},
-     data:`<p>Population of KSA is <b>35M</b>. Life expectancy is <b>80 years</b>. Assume an even distribution across ages.</p>`,
-     answer:`<p class="calc">35M ÷ 80 ≈ 437.5k → round to ~450k people per age year</p>`},
-    {ask:"Now take it to diapers. How many diapers are used in KSA per day?",
-     num:{value:12.6e6, tol:.08, unit:"diapers per day"},
-     data:`<div class="tw"><table><tr><th>Age group</th><th>0–1</th><th>1–2</th><th>2–3</th><th>75–80</th></tr>
-<tr><td>Diaper use (%)</td><td>100%</td><td>90%</td><td>80%</td><td>30%</td></tr>
-<tr><td>Avg. quantity per day</td><td>10</td><td>8</td><td>6</td><td>4</td></tr></table></div>`,
-     answer:`<div class="tw"><table><tr><th>Group</th><th>People</th><th>Use</th><th>Users</th><th>/day</th><th>Diapers/day</th></tr>
-<tr><td>0–1</td><td>450k</td><td>100%</td><td>450k</td><td>10</td><td>4.5M</td></tr>
-<tr><td>1–2</td><td>450k</td><td>90%</td><td>405k</td><td>8</td><td>3.2M</td></tr>
-<tr><td>2–3</td><td>450k</td><td>80%</td><td>360k</td><td>6</td><td>2.2M</td></tr>
-<tr><td>75–80</td><td>450k × 5 = 2.25M</td><td>30%</td><td>675k</td><td>4</td><td>2.7M</td></tr></table></div>
-<p><b>≈ 12.6M diapers per day.</b> Watch the trap: 75–80 is five age years, not one.</p>`},
-    {ask:"A pack of 12 diapers costs $6. What's the annual market size?",
-     num:{value:2.3e9, tol:.06, unit:"$ per year"},
-     answer:`<p class="calc">12.6M/day × 365 ≈ 4.6B diapers/year
-4.6B × ($6 ÷ 12) = 4.6B × $0.50 ≈ $2.3B per year</p>`},
-    {ask:"Wrap it up for me. What's the number, and how confident are you in it?",
-     answer:`<p>About <b>$2.3B per year</b>. Sanity-check it out loud: babies drive ~80% of volume. The biggest swing factors are the elderly usage rate and the age groups you included (only 75–80 here), plus the even-age-distribution assumption, which understates babies in a young population like KSA's.</p>`}
-  ]
-},
-{
-  id:"hotdog", title:"Hot Dog Stand", type:"Profitability", diff:"Easy",
-  prompt:"Your client has a hot dog stand that has been experiencing a decline in profitability in the past few months, and they want to know what the problem is.",
-  style:"Interviewee-led. Estimate numbers yourself first; the interviewer gives figures if you're far off.",
-  clarify:[
-    {q:"Where is the stand?", a:"In Hamra, Beirut."},
-    {q:"What do they sell, and for how much?", a:"A standard meal: a hot dog and a drink for $6."},
-    {q:"Who are the competitors? Are they affected too?", a:"Our direct competitor is Frank's Hot Dog, and they're not facing any problem. Indirect competitors are Roadster Diner and other restaurants."},
-    {q:"Any big recent investments?", a:"No. Disregard fixed costs; the truck has been running for a while."}
-  ],
-  steps:[
-    {ask:"How would you structure this problem?",
-     answer:`<p>Profit = Revenue − Costs.</p><ul><li><b>Revenue</b>: price × meals sold (plus any other streams)</li><li><b>Costs</b>: fixed (truck, already paid) and variable (food, utilities, rent, labor, waste)</li></ul><p>Since Frank's is fine, the issue is likely internal to our stand, not market-wide.</p>`},
-    {ask:"Let's do revenue first. How many meals do you think the stand sells per day, and what's the monthly revenue?",
-     num:{value:2700, tol:.03, unit:"$ per month (30 days)"},
-     data:`<p>The stand sells <b>15 meals per day</b>.</p>`,
-     answer:`<p class="calc">$6 × 15 meals = $90/day × 30 = $2,700/month</p>`},
-    {ask:"Here's the cost picture. What's the stand's monthly profit?",
-     num:{value:-100, tol:.02, unit:"$ per month (use − for a loss)"},
-     data:`<ul><li>COGS: they use a 3× pricing strategy (price = 3 × food cost)</li><li>Utilities (gas and electricity): $400/month</li><li>Rent: $800/month</li><li>Labor (1 chef): $500/month</li><li>Expired food: $200/month</li></ul>`,
-     answer:`<p class="calc">COGS = $6 ÷ 3 = $2/meal × 15 × 30 = $900
-Costs = 900 + 400 + 800 + 500 + 200 = $2,800/month
-Profit = 2,700 − 2,800 = −$100/month</p>`},
-    {ask:"They're in the red. How can they increase profitability? Give me a structured answer.",
-     answer:`<p><b>Increase revenues</b></p><ul><li>Raise prices, minding customers' price elasticity</li><li>Grow volume through marketing or new menu items</li><li>New revenue streams: ads on the truck, delivery, toppings</li></ul>
-<p><b>Decrease costs</b></p><ul><li>Move to cheaper rent (risky: location is a key asset)</li><li>Cut COGS without hurting quality</li><li><b>Inventory</b>: $200/month of expired food is the obvious leak. Forecast demand from monthly trends and order less. Fixing this alone flips the stand to +$100.</li></ul>`},
-    {ask:"Give me your recommendation for the owner in 30 seconds.",
-     answer:`<p>The stand loses ~$100/month. The quickest fix is cutting the $200 of monthly food waste through demand forecasting, which makes it profitable on its own. Then grow volume (15 meals/day is low for Hamra; check why Frank's does better) and test a modest price increase or add-ons.</p>`}
-  ]
-},
-{
-  id:"concert", title:"Concert in Riyadh", type:"Profitability", diff:"Easy",
-  prompt:"Our client is an entertainment company that wants to do a concert in Riyadh with a famous DJ, and they have come to us to see if it's a good idea or not.",
-  style:"Interviewee-led. Lay out what you need, then ask for the data.",
-  clarify:[
-    {q:"What does 'good idea' mean for them?", a:"Primarily: will it make money? Then what else they need to get right."},
-    {q:"Is this a one-off event?", a:"Yes, a single concert."},
-    {q:"What revenue streams are there?", a:"Ticket sales and sponsorships. I'll give you the numbers when you're ready."}
-  ],
-  steps:[
-    {ask:"How would you structure this?",
-     answer:`<ul><li><b>Profitability</b>: revenues (tickets by tier, sponsors, extras) − costs (artist, venue, operations, commissions)</li><li><b>Feasibility</b>: licenses and regulations, local partner, cultural norms</li><li><b>Demand</b>: can we sell out, and how?</li></ul>`},
-    {ask:"Here's the revenue side. What's the total revenue?",
-     num:{value:38000, tol:.02, unit:"$"},
-     data:`<div class="tw"><table><tr><th></th><th>VIP</th><th>Regular</th></tr><tr><td>Tickets</td><td>400</td><td>600</td></tr><tr><td>Price</td><td>$50</td><td>$20</td></tr></table></div>
-<div class="tw"><table><tr><th>Sponsor</th><th>Amount</th></tr><tr><td>EJ Entertainment</td><td>$3,000</td></tr><tr><td>Sky Events</td><td>$2,000</td></tr><tr><td>DJDS Events</td><td>$1,000</td></tr></table></div>`,
-     answer:`<p class="calc">VIP: $50 × 400 = $20,000
-Regular: $20 × 600 = $12,000
-Sponsors: $6,000
-Total = $38,000</p>`},
-    {ask:"And the costs. What's the profit if the concert sells out?",
-     num:{value:15800, tol:.02, unit:"$"},
-     data:`<ul><li>$3 commission to PR affiliates on each ticket sold</li><li>DJ: $6,000</li><li>Venue rent: $5,000</li><li>Maintenance and insurance: $4,000</li><li>Operational expenses: $4,200</li></ul>`,
-     answer:`<p class="calc">Fixed: 6,000 + 5,000 + 4,000 + 4,200 = $19,200
-Variable: $3 × 1,000 tickets = $3,000
-Costs = $22,200
-Profit = 38,000 − 22,200 = $15,800</p>`},
-    {ask:"This seems profitable. What other aspects of the event do we need to address?",
-     answer:`<ul><li><b>Barriers to entry</b>: event license; local regulations (a local partner may be required)</li><li><b>Culture and preferences</b>: e.g. audience arrangements that respect local norms</li><li><b>Selling out</b>: online box office, local stores, social media; start sales 1–6 months ahead</li><li><b>Extra revenue</b>: merch and accessories, DJ memorabilia, food carts, non-alcoholic drinks, valet parking</li></ul>`},
-    {ask:"So, should they do it?",
-     answer:`<p>Yes. At full occupancy it makes ~$15.8k on $38k revenue (≈42% margin). Breakeven needs most VIP seats sold, so the risk is in ticket sales: secure the license and local partner first, start sales early, and add F&B and merch to cushion lower turnout.</p>`}
-  ]
-},
-{
-  id:"banker", title:"Billionaire Banker", type:"Market Entry", diff:"Easy",
-  prompt:"Your client is a billionaire who is considering entering the Saudi banking sector. Should they do it or not? What are the factors that should be considered?",
-  style:"Discussion case. Bring your own ideas; the interviewer will steer.",
-  clarify:[
-    {q:"Does the client have banking experience?", a:"No, no past experience in the banking industry."},
-    {q:"How competitive is the market?", a:"It's relatively saturated, but there's still room for an entrant like our client."},
-    {q:"Any regulations in the way?", a:"No new regulations prevent them from entering. Saudization should be considered, though."},
-    {q:"What's their objective? Return, timeline, risk?", a:"Good question. Keep it in mind; it'll matter at the end."}
-  ],
-  steps:[
-    {ask:"What factors would you look at?",
-     answer:`<ul><li><b>Competitors</b>: who they are, how established, their goals; market trends and projections</li><li><b>Barriers to entry</b>: Saudi partner (Saudization), government regulation</li><li><b>Market size and share</b>: what share can we realistically capture; competitors' shares</li></ul><p>Then: how to enter (build vs. buy) and the economics of each.</p>`},
-    {ask:"There are two ways in. Here are the numbers. What's the payback period of each option?",
-     num:{value:6.8, tol:.04, unit:"years, for Option 1 (then do Option 2 in your notes)"},
-     data:`<div class="tw"><table><tr><th>Option 1: open our own bank</th><th>Option 2: acquire an existing player</th></tr>
-<tr><td>Initial investment: $15M</td><td>Cost of acquisition: $20M</td></tr>
-<tr><td>Yearly revenues: $10M</td><td>Yearly profit: $2.5M</td></tr>
-<tr><td>Profit margin: 22%</td><td></td></tr></table></div>`,
-     answer:`<p class="calc">Option 1: profit = $10M × 22% = $2.2M/yr → 15 ÷ 2.2 ≈ 6.8 years
-Option 2: 20 ÷ 2.5 = 8 years</p>`},
-    {ask:"So Option 1 pays back faster. Is it the better choice?",
-     answer:`<p>Not necessarily. Building from scratch is riskier: the client has no experience or credibility, and the $10M revenue is a forecast. An acquisition brings an existing customer base and real, proven profits. The answer depends on the client's <b>risk appetite</b>.</p>`},
-    {ask:"Give me your final recommendation.",
-     answer:`<p>Enter. There is room in the market and no regulatory block. If the client is risk-averse, acquire: 8-year payback, but on established customers and proven profits. If they accept risk, build: ~6.8-year payback, but forecast-based and without banking expertise. Either way, plan for Saudization and a local partner.</p>`}
-  ]
-},
-{
-  id:"tv", title:"TV Family Business", type:"Market Entry", diff:"Medium",
-  prompt:"Our client is a family business in Dubai that wants to acquire a TV channel broadcasting company. They already own and operate businesses in the F&B and transportation sectors. Is this a good idea or not?",
-  style:"Interviewee-led. Estimate first; ask for numbers when you need them.",
-  clarify:[
-    {q:"What's the client's objective?", a:"A payback period of less than 5 years."},
-    {q:"How does the channel make money?", a:"Advertisements are the only revenue stream."},
-    {q:"Do they have the money and expertise?", a:"Yes, assume they have the expertise and capability."},
-    {q:"Any barriers to entry or regulations?", a:"No barriers to entry."}
-  ],
-  steps:[
-    {ask:"How would you approach this?",
-     answer:`<ul><li><b>Client</b>: financial capacity, expertise, conflicts with existing businesses</li><li><b>Market</b>: competitors, leaders, potential share, barriers (regulation, antitrust)</li><li><b>Profitability</b>: revenue streams × price × volume; initial investment, fixed and variable costs → payback</li></ul>`},
-    {ask:"Client capability and market are fine, so let's go to profitability. Here's how the channel runs. What's the maximum yearly ad revenue?",
-     num:{value:9e6, tol:.04, unit:"$ per year"},
-     data:`<ul><li>The channel broadcasts 24/7 for 300 days per year</li><li>Every hour has 10 minutes of ads and 50 minutes of content</li><li>Peak hours (4 h/day): 1 minute of ads costs $250</li><li>Non-peak hours (20 h/day): 1 minute of ads costs $100</li></ul>`,
-     answer:`<p class="calc">Peak:     $250 × 10 min × 4 h × 300 days = $3M
-Non-peak: $100 × 10 min × 20 h × 300 days = $6M
-Total = $9M per year</p>`},
-    {ask:"Initial investment is $15M and yearly operating costs are $6M, mostly labor. What's the payback period?",
-     num:{value:5, tol:.03, unit:"years"},
-     answer:`<p class="calc">Profit = 9 − 6 = $3M/yr → 15 ÷ 3 = 5 years</p>`},
-    {ask:"Does that result make sense to you?",
-     num:{value:7.5, tol:.04, unit:"years, the revised payback"},
-     data:`<p>Actual yearly revenue is <b>$8M</b>.</p>`,
-     answer:`<p>No. $9M assumes every ad slot is sold. The limit is demand, not supply. With actual revenue of $8M:</p><p class="calc">Profit = 8 − 6 = $2M → 15 ÷ 2 = 7.5 years</p><p>That misses the 5-year target.</p>`},
-    {ask:"How could they maximize profit to speed up payback?",
-     answer:`<p><b>Increase revenues</b></p><ul><li>Charge a subscription</li><li>Fill unsold ad slots: marketing, advertising the family's own F&B and transport businesses, awareness campaigns</li><li>Host entertainment programs (e.g. a "The Voice" format) to lift ratings and ad prices</li></ul><p><b>Decrease costs</b></p><ul><li>Negotiate a lower purchase price</li><li>Reduce labor costs; outsource or automate</li></ul>`},
-    {ask:"What's your recommendation?",
-     answer:`<p>As priced, don't acquire: realistic payback is 7.5 years against a 5-year target. It works if they negotiate the price down to ~$10M, or credibly add ~$1M/yr of profit by filling ad slots (including with their own businesses' ads) and trimming labor.</p>`}
-  ]
-},
-{
-  id:"plane", title:"Plane Ticket Price", type:"Profitability", diff:"Medium",
-  prompt:"Our client is an airline company based in Dubai. They want to prepare a flight from Dubai to Paris and want us to find the ticket price that maximizes profit.",
-  style:"Math-heavy. Set up the profit function before you touch numbers.",
-  clarify:[
-    {q:"How many seats on the plane?", a:"300 seats."},
-    {q:"What revenue streams are there?", a:"Ticket price, extra luggage, amenities, advertising, a companion fee for minors, pet fees. Focus on the ticket price."},
-    {q:"What are the costs?", a:"COGS, labor, maintenance, marketing, airport fees and taxes, fuel, insurance. I'll give you totals."}
-  ],
-  steps:[
-    {ask:"How do you want to tackle this?",
-     answer:`<p>Express profit as a function of price P: find how seats sold S depends on P (a demand curve), then Profit(P) = P·S(P) − Fixed − Variable·S(P). Maximize: take the derivative and set it to zero.</p>`},
-    {ask:"Here's what we know about demand. Assuming a linear relationship, what's the equation linking seats sold to price?",
-     data:`<ul><li>At a ticket price of $1,000, 200 seats are taken</li><li>At a ticket price of $2,000, 100 seats are taken</li></ul>`,
-     answer:`<p class="calc">S = a·P + b
-a = (200 − 100) ÷ (1000 − 2000) = −0.1
-200 = −0.1 × 1000 + b → b = 300
-S = −0.1·P + 300</p>`},
-    {ask:"Costs are $10,000 fixed and $500 per seat. What price maximizes profit?",
-     num:{value:1750, tol:.01, unit:"$ per ticket"},
-     answer:`<p class="calc">Revenue = P·S = −0.1P² + 300P
-Costs   = 10,000 + 500(−0.1P + 300) = 160,000 − 50P
-Profit  = −0.1P² + 350P − 160,000
-dProfit/dP = −0.2P + 350 = 0 → P = $1,750</p>`},
-    {ask:"What does that mean for the flight? Give me the headline.",
-     answer:`<p>Price at <b>$1,750</b>. That sells 125 seats (−0.1 × 1,750 + 300) for a profit of ~$146k (revenue $218.75k − costs $72.5k). Point out that 175 seats fly empty: ancillary revenue (luggage, amenities) or tiered pricing could monetize them.</p>`}
-  ]
-},
-{
-  id:"energy", title:"Energy Consumption", type:"Discussion", diff:"Hard",
-  prompt:"The ministry of energy of a GCC country has hired you to design a program to reduce the overall energy consumption of the country. How do you approach the problem?",
-  style:"Discussion case. Breadth and structure matter more than numbers.",
-  clarify:[
-    {q:"What's the goal: a target %, a timeline?", a:"An overall reduction. No specific target; we want a program."},
-    {q:"Is there data on which sectors consume most?", a:"No numbers for this case. It's a discussion."},
-    {q:"Any constraints, like budget or politics?", a:"Not for now."}
-  ],
-  steps:[
-    {ask:"How would you structure the program?",
-     answer:`<ul><li><b>Major consumption sectors</b>: residential, commercial and entertainment, industrial, transportation</li><li><b>Consumption reduction</b>: levers for each sector</li><li><b>Feasibility</b>: engineering, expertise, available technology</li><li><b>Cost-benefit</b>: including non-financial benefits like lower CO₂ and cleaner air</li></ul>`},
-    {ask:"To save time, we'll skip feasibility and cost-benefit. Go sector by sector: how would you reduce consumption in residential, commercial and entertainment buildings?",
-     answer:`<ul><li>Raise the price of electricity per kWh</li><li>Free installation and discounts on energy-efficient appliances</li><li>Occupancy sensors so lights switch off in empty rooms</li><li>Cut unnecessary light bulbs in buildings</li><li>Consolidate cooling systems in buildings</li></ul>`},
-    {ask:"What about the industrial sector?",
-     answer:`<ul><li>Raise the price of electricity per kWh</li><li>Higher taxes and stricter regulation for big consumers</li><li>Free installation and discounts on energy-efficient machines</li><li>Reduce operating hours</li><li>Incentives for companies whose R&D finds ways to cut energy use</li></ul>`},
-    {ask:"And transportation?",
-     answer:`<ul><li>Raise fuel prices</li><li>Raise car prices to push people toward public transport</li><li>Higher fees for driving and car licenses</li><li>Higher toll charges</li><li>Car-pooling programs</li><li>Charging stations for hybrid and electric cars</li></ul>`},
-    {ask:"Summarize your program for the minister.",
-     answer:`<p>A program across four sectors combining <b>price signals</b> (electricity and fuel pricing, taxes on heavy users), <b>efficiency subsidies</b> (appliances, machines, building retrofits, EV infrastructure) and <b>behavior change</b> (sensors, car-pooling, public transport). Next steps: size consumption by sector to prioritize, then test each lever's feasibility and cost-benefit.</p>`}
-  ]
-},
-{
-  id:"bank", title:"KSA Retail Bank", type:"Profitability", diff:"Hard",
-  prompt:"Our client is one of the largest retail banks in KSA. They have been facing a decline in revenues for the past two years, and they have hired us to find the reason and provide them with a solution.",
-  style:"Interviewer-led. Some data is handed over before you build your framework.",
-  clarify:[
-    {q:"How does the bank make money?", a:"Revenue falls into 3 categories: (1) personal loans & credit cards, (2) car loans, (3) house loans."},
-    {q:"How big is the decline?", a:"Look at the revenue mix I'm about to give you."},
-    {q:"Are competitors seeing the same thing?", a:"Hold that thought. Put it in your framework."}
-  ],
-  steps:[
-    {ask:"Here's the revenue mix. Now give me your framework.",
-     data:`<div class="tw"><table><tr><th></th><th>Cat. 1: Personal loans & credit cards</th><th>Cat. 2: Car loans</th><th>Cat. 3: House loans</th></tr>
-<tr><td>2 years ago</td><td>55%</td><td>28%</td><td>17%</td></tr><tr><td>Now</td><td>50%</td><td>30%</td><td>20%</td></tr></table></div>`,
-     answer:`<p><b>External</b></p><ul><li>Economy: lower disposable income, interest rates, new financial regulation</li><li>Market: are competitors facing it too? their offers, market shares</li></ul><p><b>Internal</b></p><ul><li>Revenue streams (cards, loan returns, FX fees)</li><li>Price and fees: up or down?</li><li>Volume: customer count up or down?</li><li>Product mix: % by stream</li></ul>`},
-    {ask:"The problem is purely internal. Which category is behind the decline, and what can you say about the other two?",
-     answer:`<p><b>Category 1.</b> Its share fell 55% → 50% <i>and</i> the total pie shrank, so its absolute revenue definitely fell.</p><p>Categories 2 and 3: <b>undetermined</b>. Their shares grew, but on a smaller total, so in absolute terms they may have risen or fallen.</p>`},
-    {ask:"How could the bank grow Category 1 revenue? Which route is easier?",
-     answer:`<p>Sell more to existing customers, or acquire new ones. <b>Existing customers is easier</b>: banks have high retention, and people with deposits and loans rarely switch.</p><p>The main lever is <b>cross-selling</b>: credit cards to personal-loan holders, and vice versa.</p>`},
-    {ask:"Let's size one direction: selling credit cards to customers who only have a personal loan. How much revenue does that add per year?",
-     num:{value:5.25e6, tol:.04, unit:"$ per year"},
-     data:`<ul><li>500,000 customers in Category 1: 30% personal loans only, 50% credit cards only, 20% both</li><li>Only 10% of personal-loan-only customers are interested in a credit card</li><li>Each customer spends $20,000/year on average</li><li>5% of customers default on credit card payments</li><li>Card fees: $250 annual fee, and a 10% charge for customers who default</li></ul>`,
-     answer:`<p class="calc">Loan-only: 30% × 500k = 150k → 10% interested = 15,000
-Annual fee:  15,000 × $250 = $3.75M
-Default fee: 15,000 × 5% × $20,000 × 10% = $1.5M
-Added revenue = $5.25M</p>`},
-    {ask:"Cross-selling the other way, personal loans to card holders, brings $18.75M. What's the total upside, and what do you recommend?",
-     num:{value:24e6, tol:.03, unit:"$ per year total"},
-     answer:`<p class="calc">3.75 + 1.5 + 18.75 = $24M</p><p>Go ahead with cross-selling in both directions (~$24M/yr), but dig into Categories 2 and 3 as well: they may also be shrinking in absolute terms.</p>`}
-  ]
-},
-{
-  id:"crypto", title:"Lebanese Cryptocurrency", type:"Market Entry", diff:"Medium",
-  prompt:"Our client is a startup that wants to create a cryptocurrency to be used in Lebanon. They have hired you to find out whether this is a good idea.",
-  style:"Interviewee-led. Estimate first; there's a market sizing inside.",
-  clarify:[
-    {q:"Does the client have crypto expertise and funding?", a:"Yes, they have the necessary expertise and are financially capable."},
-    {q:"Who are the competitors?", a:"One major competitor: Bitcoin, which controls 60% of the market. The other 40% is untapped."},
-    {q:"How would the coin make money?", a:"Transaction fees. You'll get the details when you're there."}
-  ],
-  steps:[
-    {ask:"What's your framework?",
-     answer:`<ul><li><b>Client</b>: crypto expertise, financial capacity</li><li><b>Market</b>: size of crypto in Lebanon, competitors and shares, barriers (legislation, regulation, distribution)</li><li><b>Profitability</b>: revenue streams (fixed fees, commissions) × volume; initial investment and operating costs</li></ul>`},
-    {ask:"Client and competition are covered. Estimate the crypto market in Lebanon. How many people could use our coin?",
-     num:{value:240000, tol:.06, unit:"people (our reachable market)"},
-     data:`<p>Lebanon's population is ~6M, spread evenly over ages 0–80.</p><div class="tw"><table><tr><th>Age group</th><th>0–20</th><th>21–40</th><th>41–60</th><th>61–80</th></tr><tr><td>Share into crypto</td><td>10%</td><td>25%</td><td>5%</td><td>0%</td></tr></table></div>`,
-     answer:`<p class="calc">1.5M per group → 150k + 375k + 75k + 0 = 600k into crypto
-Untapped 40% → 600k × 40% = 240k potential users</p>`},
-    {ask:"How many transactions per week would those users make?",
-     num:{value:624000, tol:.04, unit:"transactions per week"},
-     data:`<div class="tw"><table><tr><th>Income level</th><th>Share of population</th><th>Transactions per week</th></tr>
-<tr><td>High</td><td>10%</td><td>7</td></tr><tr><td>Medium</td><td>50%</td><td>3</td></tr><tr><td>Low</td><td>40%</td><td>1</td></tr></table></div>`,
-     answer:`<p class="calc">High: 240k × 10% × 7 = 168k
-Mid:  240k × 50% × 3 = 360k
-Low:  240k × 40% × 1 =  96k
-Total = 624k transactions/week</p>`},
-    {ask:"Here's the fee structure. What's the weekly profit?",
-     num:{value:61200, tol:.04, unit:"$ per week"},
-     data:`<ul><li>A fixed charge of $0.50 on every transaction</li><li>Plus a commission by transaction size:</li></ul><div class="tw"><table><tr><th>Transaction size</th><th>Commission</th><th>Share of volume</th></tr>
-<tr><td>$0–10k</td><td>$0.60</td><td>50%</td></tr><tr><td>$10k–100k</td><td>$0.40</td><td>40%</td></tr><tr><td>&gt; $100k</td><td>$0.20</td><td>10%</td></tr></table></div><ul><li>Profit margin is 10%</li></ul>`,
-     answer:`<p class="calc">Fixed: $0.50 × 624k = $312k
-Commission: (0.5×0.60 + 0.4×0.40 + 0.1×0.20) × 624k = $0.48 × 624k ≈ $300k
-Revenue ≈ $612k/week → × 10% = $61.2k profit/week</p>`},
-    {ask:"Why do you think the margin is only 10%?",
-     answer:`<ul><li>High initial investment: licenses and approvals, a site for the equipment, servers, heavy cooling for always-on mining</li><li>High cost to validate transactions on the host blockchain</li><li>High customer acquisition cost to win users away from an established coin like Bitcoin</li></ul>`},
-    {ask:"What's your recommendation?",
-     answer:`<p>It looks profitable (~$61k/week, ~$3.2M/yr), but with caveats: any new entrant will eat into the 40% share we assumed; compare the initial investment to yearly profit to get the payback period; and work on costs to lift the 10% margin.</p>`}
-  ]
-},
-{
-  id:"hair", title:"Hair Loss Pill", type:"Profitability", diff:"Medium",
-  prompt:"Our client has created a pill that reverses hair loss, and they want to sell it in Lebanon. They have hired you to estimate the revenues of the first year.",
-  style:"Interviewee-led. Pricing judgment plus market sizing.",
-  clarify:[
-    {q:"How many pills does a patient need?", a:"Only one pill cures a person of hair loss."},
-    {q:"Are there competitors?", a:"No direct competitors. Indirect ones, like hair treatments and transplants, can be a threat on pricing."},
-    {q:"What do alternatives cost?", a:"An average hair transplant costs $5,000."}
-  ],
-  steps:[
-    {ask:"How would you structure the first-year revenue estimate?",
-     answer:`<p>Revenue = Price × Volume.</p><ul><li><b>Price</b>: price per pill, pills per treatment, pricing strategy (cost-, value- or competitor-based)</li><li><b>Volume</b>: market size in Lebanon, our share, adoption in year one</li></ul>`},
-    {ask:"Let's start with price. What would you charge for one pill, and why?",
-     num:{min:7500, max:10000, unit:"$ per pill"},
-     answer:`<p>Mix value-based and competitor-based pricing. One pill gives a lifetime cure, which is worth a lot; transplants anchor the price. Price at <b>1.5–2× a transplant: $7,500–$10,000</b>. We'll use $7,500.</p>`},
-    {ask:"Now volume. How many people in Lebanon would be interested in the pill?",
-     num:{value:1.0125e6, tol:.05, unit:"people"},
-     data:`<div class="tw"><table><tr><th>Age</th><th>Men (pop.)</th><th>Men % interested</th><th>Women (pop.)</th><th>Women % interested</th></tr>
-<tr><td>0–20</td><td>0.75M</td><td>0%</td><td>0.75M</td><td>0%</td></tr><tr><td>21–40</td><td>0.75M</td><td>20%</td><td>0.75M</td><td>0%</td></tr>
-<tr><td>41–60</td><td>0.75M</td><td>50%</td><td>0.75M</td><td>5%</td></tr><tr><td>61–80</td><td>0.75M</td><td>40%</td><td>0.75M</td><td>20%</td></tr></table></div>`,
-     answer:`<p class="calc">Men:   150k + 375k + 300k = 825k
-Women: 37.5k + 150k = 187.5k
-Total ≈ 1.0125M → round to 1M</p>`},
-    {ask:"Will all of them be able to pay? Factor in income.",
-     num:{value:220000, tol:.04, unit:"people who can afford it"},
-     data:`<div class="tw"><table><tr><th>Income level</th><th>Share of population</th><th>Share that can afford the pill</th></tr>
-<tr><td>High</td><td>10%</td><td>100%</td></tr><tr><td>Medium</td><td>40%</td><td>30%</td></tr><tr><td>Low</td><td>50%</td><td>0%</td></tr></table></div>`,
-     answer:`<p class="calc">High: 1M × 10% × 100% = 100k
-Mid:  1M × 40% × 30%  = 120k
-Low:  0
-Total = 220k can afford it</p>`},
-    {ask:"Will all 220k buy it in year one? What's the first-year revenue?",
-     num:{value:330e6, tol:.05, unit:"$ in year one"},
-     data:`<p>Assume early adopters and innovators, 20% of those who can afford it, buy in year one.</p>`,
-     answer:`<p>No, only early adopters buy in year one.</p><p class="calc">220k × 20% × $7,500 = $330M</p>`},
-    {ask:"$330M. Is this a profitable idea?",
-     answer:`<p>Not necessarily. Revenue isn't profit:</p><ul><li>R&D to develop the pill is probably very high, so breakeven may take years</li><li>The price may be overstated: if results match a transplant, speed and convenience may not justify a 50–100% premium</li></ul>`}
-  ]
-}
-];
+const CASES = window.CASES;
 
 const FIT = ["Tell me about yourself.","Why consulting?","Why our firm?","Give me an example of leadership.","Walk me through your CV.","If I should remember you in one word, what would it be?","Why should we give you an offer?","Tell me about a group project that was very important to you, and why.","What are your top 3 strengths?","What are your 3 biggest weaknesses?","Tell me about a time you challenged yourself.","Tell me about a time you led a group.","What is the most interesting course you took at university, and why?","What skills do you aim to improve?","Why are you a good candidate for a career in consulting?","Tell me about a leadership experience that tested your ability to work with and manage others.","What is your biggest regret?","Why are you not pursuing a career directly related to your major?","Why did you choose your major?","All the candidates here have interesting profiles. What sets you apart?"];
 
@@ -452,7 +136,7 @@ const SCORE_DIMS = [
 ];
 
 /* ---------- storage (per-viewer convenience only) ---------- */
-const KEY="case-room-v1";
+const KEY="case-room-v2";
 let store={};
 try{store=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){store={}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
@@ -461,7 +145,7 @@ function cs(id){store[id]=store[id]||{step:0,asked:[],ans:{},num:{},seen:{},scor
 /* ---------- number parsing ---------- */
 function parseNum(s){
   if(!s)return NaN;
-  let t=String(s).toLowerCase().replace(/[$,\s]/g,"").replace(/years?|yrs?|ppl|people/g,"");
+  let t=String(s).toLowerCase().replace(/[$,%\s]/g,"").replace(/years?|yrs?|ppl|people/g,"");
   let neg=false;
   if(/^\(.*\)$/.test(t)){neg=true;t=t.slice(1,-1)}
   const m=t.match(/^(-?\d*\.?\d+)(k|thousand|m|mm|mn|million|b|bn|billion)?$/);
@@ -503,13 +187,13 @@ function topBar(){
 }
 
 function renderHome(){
-  const types=["All","Market Sizing","Profitability","Market Entry","Discussion"];
+  const types=["All",...new Set(CASES.map(c=>c.type))];
   const list=CASES.filter(c=>filter==="All"||c.type===filter);
   const doneN=CASES.filter(c=>store[c.id]?.done).length;
   app.innerHTML=topBar()+`
   <section class="intro"><div class="eyebrow">AUBCC Casebook 2021–22 · 10 cases</div>
   <h1>Practice cases the way they're asked</h1>
-  <p>Each case plays out one question at a time. The interviewer only hands over data when you ask for it, and the model answer stays hidden until you've committed to yours.</p></section>
+  <p>Each case runs like a real interview: a client story and objective, exhibits you have to read, a twist partway through, and a decision to make at the end. The interviewer only hands over data when you ask for it, and the model answer stays hidden until you've committed to yours.</p></section>
   <section class="method"><h3>How to run each case</h3><ol>
   <li><b>Read the prompt out loud and play it back.</b> <span>Summarize the client, the problem and the objective in one sentence.</span></li>
   <li><b>Ask clarifying questions.</b> <span>Type your own first, then tap the question chips to hear the interviewer's answers.</span></li>
@@ -531,20 +215,23 @@ function stepHTML(c,s,i,isCurrent){
   const k=String(i);
   const seenData=ivMode||s.seen["d"+k], seenAns=ivMode||s.seen["a"+k];
   const nv=s.num[k]||"";
+  const hints=s.seen["h"+k]||0;
   let v="";
   if(st.num&&nv){const [cls,msg]=judge(st.num,parseNum(nv));v=`<span class="verdict ${cls}">${msg}</span>`}
   return `<div class="turn ${isCurrent?"new":""}">
-   <div class="iv"><span class="who">Interviewer</span><p>${st.ask}</p></div>
+   <div class="iv"><span class="who">Interviewer</span><div class="say">${st.say.map(l=>`<p>${l}</p>`).join("")}</div></div>
    <div class="you"><label class="youlbl" for="ans-${c.id}-${k}">Your answer</label>
      <textarea id="ans-${c.id}-${k}" data-ans="${k}" placeholder="Talk it through out loud, then jot your structure or math here…">${esc(s.ans[k]||"")}</textarea>
      ${st.num?`<div class="numrow"><input type="text" id="num-${c.id}-${k}" data-num="${k}" value="${esc(nv)}" placeholder="Your number" inputmode="decimal"><button class="small" data-check="${k}">Check number</button><span class="unit">${st.num.unit}</span></div><div id="v-${k}">${v}</div>`:""}
      <div class="row">
-       ${st.data&&!seenData?`<button class="small" data-reveal="d${k}">Ask for the data</button>`:""}
+       ${st.give&&!seenData?`<button class="small" data-reveal="d${k}">Ask for the data</button>`:""}
+       ${st.stuck&&!seenAns&&hints<st.stuck.length?`<button class="small ghost" data-hint="${k}">${hints?"Another hint":"I'm stuck: hint"}</button>`:""}
        ${!seenAns?`<button class="small ghost" data-reveal="a${k}">Show model answer</button>`:""}
      </div>
    </div>
-   ${st.data&&seenData?`<div class="data"><span class="lbl">Interviewer hands you</span>${st.data}</div>`:""}
-   ${seenAns?`<div class="answer"><span class="lbl">Model answer</span>${st.answer}</div>`:""}
+   ${hints&&!seenAns?`<div class="iv"><span class="who">Interviewer · hint</span><div class="say">${st.stuck.slice(0,hints).map(h=>`<p>${h}</p>`).join("")}</div></div>`:""}
+   ${st.give&&seenData?`<div class="data"><span class="lbl">Interviewer hands you</span>${st.give.html}</div>`:""}
+   ${seenAns?`<div class="answer"><span class="lbl">Model answer</span>${st.key||""}${st.listen?`<p><b>A strong answer covers:</b></p><ul>${st.listen.map(l=>`<li>${l}</li>`).join("")}</ul>`:""}</div>`:""}
   </div>`;
 }
 
@@ -552,11 +239,11 @@ function renderCase(){
   const c=CASES.find(x=>x.id===view.id), s=cs(c.id);
   const total=c.steps.length;
   const shown=s.done?total:Math.min(s.step,total);
-  let turns=`<div class="turn"><div class="iv"><span class="who">Interviewer</span><div class="say"><p>${c.prompt}</p><p><i>What questions do you have before you start?</i></p></div></div>
+  let turns=`<div class="turn"><div class="iv"><span class="who">Interviewer</span><div class="say">${c.prompt.map(l=>`<p>${l}</p>`).join("")}<p><i>What questions do you have before you start?</i></p></div></div>
    <div class="you"><label class="youlbl" for="ans-${c.id}-q">Your clarifying questions</label>
    <textarea id="ans-${c.id}-q" data-ans="q" placeholder="Write your own questions first…">${esc(s.ans.q||"")}</textarea>
-   <div class="chips">${c.clarify.map((q,j)=>`<button class="${s.asked.includes(j)||ivMode?"asked":""}" data-ask="${j}">${q.q}</button>`).join("")}</div></div>
-   ${c.clarify.map((q,j)=>(s.asked.includes(j)||ivMode)?`<div class="iv"><span class="who">Interviewer · ${esc(q.q)}</span><p>${q.a}</p></div>`:"").join("")}
+   <div class="chips">${c.clarify.map((q,j)=>`<button class="${s.asked.includes(j)||ivMode?"asked":""}" data-ask="${j}">${q[0]}</button>`).join("")}</div></div>
+   ${c.clarify.map((q,j)=>(s.asked.includes(j)||ivMode)?`<div class="iv"><span class="who">Interviewer · ${esc(q[0])}</span><p>${q[1]}</p></div>`:"").join("")}
   </div>`;
   for(let i=0;i<shown;i++)turns+=stepHTML(c,s,i,i===shown-1);
   const finished=shown>=total;
@@ -567,7 +254,7 @@ function renderCase(){
   <div class="bar"><button class="small ghost" data-home>← All cases</button>
    <div class="progress" aria-label="Progress">${c.steps.map((_,i)=>`<i class="${i<shown?"on":""}"></i>`).join("")}</div>
    <div class="row"><span class="timer ${s.secs>1800?"over":""}" id="timer">${fmtT(s.secs)}</span><button class="small" data-pause>${view.paused?"Resume":"Pause"}</button></div></div>
-  <header class="casehead"><div class="meta"><span class="chip">${c.type}</span><span class="chip d-${c.diff}">${c.diff}</span></div><h2>${c.title}</h2><p class="tip">${c.style}</p></header>
+  <header class="casehead"><div class="meta"><span class="chip">${c.type}</span><span class="chip d-${c.diff}">${c.diff}</span></div><h2>${c.title}</h2><p class="tip">About ${c.mins} minutes. Talk out loud as if the interviewer is listening.</p></header>
   <div class="turns">${turns}${nextBtn}${scoreBox}</div>
   <div class="notes"><label class="youlbl" for="notes-${c.id}">Scratch notes</label><textarea id="notes-${c.id}" data-notes placeholder="Numbers, assumptions, things to say in the recommendation…">${esc(s.notes||"")}</textarea></div>`;
   clearInterval(tick);
@@ -603,6 +290,7 @@ app.addEventListener("click",e=>{
   if("ask"in d){const j=+d.ask;if(!s.asked.includes(j))s.asked.push(j)}
   else if("next"in d){s.step=Math.min(s.step+1,c.steps.length)}
   else if("reveal"in d){s.seen[d.reveal]=true}
+  else if("hint"in d){s.seen["h"+d.hint]=(s.seen["h"+d.hint]||0)+1}
   else if("check"in d){const inp=document.getElementById(`num-${c.id}-${d.check}`);s.num[d.check]=inp.value;const [cls,msg]=judge(c.steps[+d.check].num,parseNum(inp.value));document.getElementById("v-"+d.check).innerHTML=`<span class="verdict ${cls}">${msg}</span>`;save();return}
   else if("score"in d){s.scores[d.score]=+d.n}
   else if("done"in d){s.done=true}
