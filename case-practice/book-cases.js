@@ -265,3 +265,20 @@ window.CASES = [
   ]
 }
 ];
+
+/* What goes beyond the book (Hacking the Case Interview). Steps without an entry follow the book.
+   "added" = new step; "partly" = book step with added data or questions (see note).
+   clarify lists the indexes of clarifying answers that were added. */
+window.CASE_SOURCE = "the book";
+window.CASE_ADDITIONS = {
+  wine:{prompt:"'Over the past two years' is added.", clarify:[0,1,2,3],
+    steps:{"Size the wine market":["partly","The book's sample-answer assumptions are offered as data if asked."],"Is it attractive?":["partly","The $40B beer market is from the book; growth rates and margins are added."],"Synergies":["partly","The book finds few synergies; the distribution-channel synergy is added."],"Build it ourselves":["added"],"Or buy a winery":["added"],"Recommendation":["partly","Not entering is the book's answer; the 6-year test and distribution-partnership idea are added."]}},
+  clothes:{clarify:[2,3,4],
+    steps:{"Why shirts?":["added","The market-trends exhibit is new."],"Push back":["added"],"Recommendation":["partly","Online sales and testing the old shoe price are added."]}},
+  nigeriacard:{clarify:[2,4],
+    steps:{"Stress test":["added","The 6% default scenario is new."],"Recommendation":["partly","Acquiring is the book's answer; the credit-risk conditions are added."]}},
+  pharma:{clarify:[4],
+    steps:{"Breakeven price":["partly","The book's sample-answer assumptions are offered as data if asked."],"Two prices":["added"],"Recommendation":["partly","The two-price option is added."]}},
+  diamond:{clarify:[2,3],
+    steps:{"Going premium":["added"],"Fixing earrings":["partly","The ideas are from the book; the cost breakdown and lab-grown data are added."],"Recommendation":["partly","The premium necklace numbers are added."]}}
+};

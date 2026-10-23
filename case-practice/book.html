@@ -126,6 +126,8 @@ th{font-weight:600}
 .kid:only-child::after{display:none}
 .addnode{font-size:.8rem;padding:4px 10px;border-style:dashed;color:var(--muted);background:transparent;white-space:nowrap}
 .addnode:hover{color:var(--accent)}
+.addtag{display:inline-block;font-family:var(--body);font-size:.64rem;letter-spacing:.07em;text-transform:uppercase;font-weight:700;padding:1px 7px;border-radius:999px;border:1px solid currentColor;color:var(--warn);margin-left:6px;vertical-align:middle;font-style:normal}
+.addnote{font-family:var(--body);font-size:.8rem;color:var(--muted);font-style:italic;margin-top:6px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chips button{border-radius:999px;font-size:.88rem}
 .chips button.asked{background:var(--iv);color:var(--muted)}
@@ -196,6 +198,13 @@ function judge(spec,v){
   return["bad","Not there yet. Re-check your steps, or ask for the data."];
 }
 
+
+/* ---------- marks for content added beyond the source ---------- */
+const SRC=window.CASE_SOURCE||"the source", ADD=window.CASE_ADDITIONS||{};
+const addStep=(c,name)=>((ADD[c.id]||{}).steps||{})[name];
+const addClar=(c,j)=>((ADD[c.id]||{}).clarify||[]).includes(j);
+const addTag=k=>k?`<span class="addtag" title="Not in ${SRC}">${k==="partly"?"Partly added":"Added"}</span>`:"";
+const addNote=(txt)=>txt?`<p class="addnote">Beyond ${SRC}: ${txt}</p>`:"";
 /* ---------- app state ---------- */
 let view={name:"home"}, filter="All", ivMode=false, tick=null, fitTick=null;
 try{ivMode=localStorage.getItem(KEY+"-iv")==="1"}catch(e){}
@@ -228,7 +237,8 @@ function renderHome(){
   <li><b>Estimate before you ask for data.</b> <span>Commit to a number, then tap "Ask for the data". Do the math out loud and check it with the number box.</span></li>
   <li><b>Say what each number means.</b> <span>"So what?" after every calculation is what separates good candidates.</span></li>
   <li><b>Close answer-first.</b> <span>Recommendation, 2–3 reasons, risks, next steps. Then score yourself honestly.</span></li></ol>
-  <p class="tip" style="margin-top:10px">Practicing with a friend? Hand them the screen with Interviewer mode on: they see every answer and the data to give you.</p></section>
+  <p class="tip" style="margin-top:10px"><span class="addtag" style="margin-left:0">Added</span> and <span class="addtag" style="margin-left:0">Partly added</span> mark questions, data and answers that go beyond ${SRC}, so you know what you won't find in the original.</p>
+  <p class="tip" style="margin-top:6px">Practicing with a friend? Hand them the screen with Interviewer mode on: they see every answer and the data to give you.</p></section>
   <div class="row" style="justify-content:space-between;margin-bottom:10px"><h2>Cases</h2><span class="status">${doneN} of ${CASES.length} done</span></div>
   <div class="filters" role="group" aria-label="Filter by case type">${types.map(t=>`<button class="small" data-filter="${t}" aria-pressed="${t===filter}">${t}</button>`).join("")}</div>
   <div class="cases">${list.map(c=>{const s=store[c.id];const a=avg(s?.scores);
@@ -246,7 +256,7 @@ function stepHTML(c,s,i,isCurrent){
   let v="";
   if(st.num&&nv){const [cls,msg]=judge(st.num,parseNum(nv));v=`<span class="verdict ${cls}">${msg}</span>`}
   return `<div class="turn ${isCurrent?"new":""}">
-   <div class="iv"><span class="who">Interviewer</span><div class="say">${st.say.map(l=>`<p>${l}</p>`).join("")}</div></div>
+   <div class="iv"><span class="who">Interviewer${addTag((addStep(c,st.name)||[])[0])}</span><div class="say">${st.say.map(l=>`<p>${l}</p>`).join("")}</div>${addNote((addStep(c,st.name)||[])[1])}</div>
    <div class="you"><label class="youlbl" for="ans-${c.id}-${k}">Your answer</label>
      ${isTreeStep(c,i)?treeHTML(c,s):""}
      <textarea id="ans-${c.id}-${k}" data-ans="${k}" placeholder="${isTreeStep(c,i)?"Notes: which branch you'd start with, and why…":"Talk it through out loud, then jot your math here…"}">${esc(s.ans[k]||"")}</textarea>
@@ -267,11 +277,11 @@ function renderCase(){
   const c=CASES.find(x=>x.id===view.id), s=cs(c.id);
   const total=c.steps.length;
   const shown=s.done?total:Math.min(s.step,total);
-  let turns=`<div class="turn"><div class="iv"><span class="who">Interviewer</span><div class="say">${c.prompt.map(l=>`<p>${l}</p>`).join("")}<p><i>What questions do you have before you start?</i></p></div></div>
+  let turns=`<div class="turn"><div class="iv"><span class="who">Interviewer</span><div class="say">${c.prompt.map(l=>`<p>${l}</p>`).join("")}<p><i>What questions do you have before you start?</i></p></div>${addNote((ADD[c.id]||{}).prompt)}</div>
    <div class="you"><label class="youlbl" for="ans-${c.id}-q">Your clarifying questions</label>
    <textarea id="ans-${c.id}-q" data-ans="q" placeholder="Write your own questions first…">${esc(s.ans.q||"")}</textarea>
-   <div class="chips">${c.clarify.map((q,j)=>`<button class="${s.asked.includes(j)||ivMode?"asked":""}" data-ask="${j}">${q[0]}</button>`).join("")}</div></div>
-   ${c.clarify.map((q,j)=>(s.asked.includes(j)||ivMode)?`<div class="iv"><span class="who">Interviewer · ${esc(q[0])}</span><p>${q[1]}</p></div>`:"").join("")}
+   <div class="chips">${c.clarify.map((q,j)=>`<button class="${s.asked.includes(j)||ivMode?"asked":""}" data-ask="${j}">${q[0]}${addClar(c,j)?addTag("added"):""}</button>`).join("")}</div></div>
+   ${c.clarify.map((q,j)=>(s.asked.includes(j)||ivMode)?`<div class="iv"><span class="who">Interviewer · ${esc(q[0])}${addClar(c,j)?addTag("added"):""}</span><p>${q[1]}</p></div>`:"").join("")}
   </div>`;
   for(let i=0;i<shown;i++)turns+=stepHTML(c,s,i,i===shown-1);
   const finished=shown>=total;

@@ -97,6 +97,8 @@ textarea{font:inherit;width:100%;min-height:70px;border:1px solid var(--line);bo
 .toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
 .toc button{text-align:left;display:grid;gap:4px;padding:12px 14px;border-radius:8px}
 .toc button b{font-family:var(--display);font-size:1.12rem;font-weight:600}
+.addtag{display:inline-block;font-family:var(--body);font-size:.64rem;letter-spacing:.07em;text-transform:uppercase;font-weight:700;padding:1px 7px;border-radius:999px;border:1px solid currentColor;color:var(--give-bar);margin-left:8px;vertical-align:middle;font-style:normal}
+.addnote{font-size:.84rem;color:var(--muted);font-style:italic}
 .printonly{display:none}
 .navrow{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 @media (max-width:520px){h1{font-size:1.9rem}.asks td:first-child{width:auto}.asks tr{display:grid}.asks td{border:0;padding:3px 0}.asks tr{border-bottom:1px solid var(--line);padding:6px 0}}
@@ -150,7 +152,8 @@ const GUIDE = [
 <div class="blk say"><span class="tag">Say</span><p class="line">Words you read out loud.</p></div>
 <div class="blk give"><span class="tag">Give only when…</span><p>Data you hand over (read it, or show this box) only when the trigger happens.</p></div>
 <div class="blk key"><span class="tag">Answer key, don't show</span><p>The right numbers and what a strong answer contains.</p></div>
-<div class="blk flag"><span class="tag">If they're stuck</span><p>Hints in order. Give one, wait 30 seconds, then the next.</p></div></div>
+<div class="blk flag"><span class="tag">If they're stuck</span><p>Hints in order. Give one, wait 30 seconds, then the next.</p></div>
+<p><span class="addtag" style="margin-left:0">Added</span> <span class="addtag">Partly added</span> mark steps, data and answers that go beyond ${window.CASE_SOURCE||"the source"}. A line under the step says exactly what was added.</p></div>
 <div class="panel"><h3>Before you start (2 minutes)</h3><ul class="check">
 <li><label><input type="checkbox">Pick a case you haven't read with them. Start with an <b>Easy</b> one.</label></li>
 <li><label><input type="checkbox">Read the case once to yourself, start to finish (about 5 minutes).</label></li>
@@ -265,6 +268,13 @@ const FIT = [
 
 const DIMS=[["Structure","Clear, tailored framework?"],["Math","Correct, clean, said out loud?"],["Business sense","Found the insight, said \"so what\"?"],["Communication","Answer-first, clear, confident?"],["Drive","Led the case; few hints needed?"]];
 
+
+/* ---------- marks for content added beyond the source ---------- */
+const SRC=window.CASE_SOURCE||"the source", ADD=window.CASE_ADDITIONS||{};
+const addStep=(c,name)=>((ADD[c.id]||{}).steps||{})[name];
+const addClar=(c,j)=>((ADD[c.id]||{}).clarify||[]).includes(j);
+const addTag=k=>k?`<span class="addtag" title="Not in ${SRC}">${k==="partly"?"Partly added":"Added"}</span>`:"";
+const addNote=(txt)=>txt?`<p class="addnote">Beyond ${SRC}: ${txt}</p>`:"";
 /* ===================== RENDER ===================== */
 const KEY="interviewer-binder-v2";
 let theme="light";try{theme=localStorage.getItem(KEY+"-theme")||"light"}catch(e){}
@@ -280,11 +290,11 @@ function caseHTML(c,ci){
   <div class="meta"><span class="chip">${c.type}</span><span class="chip">${c.diff}</span><span class="chip">~${c.mins} min</span></div>
   <div class="panel"><h4>What this case is about (read this yourself)</h4><p>${c.plain}</p></div>
   <div class="blk key"><span class="tag">The answer in one line, don't show</span><p>${c.bottom}</p></div>`;
-  const steps=[{name:"Read the prompt",time:"2–3 min",say:[...c.prompt,"Do you have any questions before you start?"],asks:c.clarify,listen:c.openListen},...c.steps];
+  const steps=[{name:"Read the prompt",time:"2–3 min",say:[...c.prompt,"Do you have any questions before you start?"],asks:c.clarify,listen:c.openListen,add:(ADD[c.id]||{}).prompt?["partly",(ADD[c.id]||{}).prompt]:null},...c.steps.map(st=>({...st,add:addStep(c,st.name)}))];
   steps.forEach((p,i)=>{
-    h+=`<section class="step"><div class="stephead"><h3><span class="stepno">${i+1}</span>${p.name}</h3><span class="t">${p.time}</span></div>`;
+    h+=`<section class="step"><div class="stephead"><h3><span class="stepno">${i+1}</span>${p.name}${addTag(p.add&&p.add[0])}</h3><span class="t">${p.time}</span></div>${p.add&&p.add[1]?addNote(p.add[1]):""}`;
     h+=`<div class="blk say"><span class="tag">Say</span>${p.say.map(l=>`<p class="line">"${l}"</p>`).join("")}</div>`;
-    if(p.asks)h+=`<div class="blk plain"><span class="tag">If they ask… you answer</span><div class="tw"><table class="asks">${p.asks.map(a=>`<tr><td>${a[0]}</td><td>"${a[1]}"</td></tr>`).join("")}<tr><td>Anything else</td><td>"Not important for this case. Make an assumption."</td></tr></table></div></div>`;
+    if(p.asks)h+=`<div class="blk plain"><span class="tag">If they ask… you answer</span><div class="tw"><table class="asks">${p.asks.map((a,j)=>`<tr><td>${a[0]}${i===0&&addClar(c,j)?addTag("added"):""}</td><td>"${a[1]}"</td></tr>`).join("")}<tr><td>Anything else</td><td>"Not important for this case. Make an assumption."</td></tr></table></div></div>`;
     if(p.give)h+=`<div class="blk give"><span class="tag">Give only when: ${p.give.when}</span>${p.give.html}</div>`;
     if(p.listen)h+=`<div class="blk plain"><span class="tag">Listen for: tick what you hear</span><ul class="check">${p.listen.map((l,j)=>{const id=`${c.id}-${i}-${j}`;return `<li><label><input type="checkbox" id="ck-${id}" data-ck="${id}" ${s.ck&&s.ck[id]?"checked":""}><span>${l}</span></label></li>`}).join("")}</ul></div>`;
     if(p.key)h+=`<div class="blk key"><span class="tag">Answer key, don't show</span>${p.key}</div>`;

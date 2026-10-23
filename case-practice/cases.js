@@ -530,3 +530,30 @@ window.CASES = [
   ]
 }
 ];
+
+/* What goes beyond the AUBCC Casebook. Steps without an entry follow the casebook.
+   "added" = new step; "partly" = casebook step with added data or questions (see note).
+   clarify lists the indexes of clarifying answers that were added. */
+window.CASE_SOURCE = "the AUBCC casebook";
+window.CASE_ADDITIONS = {
+  diapers:{prompt:"The client (a consumer goods company weighing a factory in KSA) is added. The casebook only asks for the market size.", clarify:[3,4],
+    steps:{"Sanity check":["added"],"The factory decision":["added","10% share, 15% margin and the $100M factory are new."],"What else to check":["added"],"Recommendation":["added"]}},
+  hotdog:{prompt:"Four years in business, a loss this month and the $700/month goal are added.", clarify:[2,3],
+    steps:{"Last year vs. this year":["partly","This year's figures are from the casebook. The whole 'last year' column is added."],"Two clues":["added"],"Customer survey":["added"],"Should they cut the price?":["added"],"Recommendation":["added"]}},
+  concert:{prompt:"The two-week deadline is added.", clarify:[0,3,4],
+    steps:{"Framework":["partly","The casebook goes straight to the calculation; the framework question is added."],"Realistic sales":["added","Past sell-through (70% / 90%) and the $10k minimum are new."],"Closing the gap":["added"],"Recommendation":["added"]}},
+  banker:{prompt:"The real-estate background and the $25M budget are added.", clarify:[0,1],
+    steps:{"The market":["added"],"Build or buy":["partly","Investment, revenue, margin and profit are from the casebook. The 2-year launch delay, customer count and Saudization rows are added."],"The catch":["added"],"Recommendation":["partly","Risk appetite is the casebook's answer; the real-estate concentration condition is added."]}},
+  tv:{prompt:"The restaurant chain, bus company and the seller's asking price framing are added.", clarify:[1,3,4],
+    steps:{"Reality check":["partly","The $8M actual revenue is from the casebook; the slot sell-through exhibit is added."],"Synergies":["added"],"The right price":["added"],"Recommendation":["partly","The casebook asks how to speed up payback; the counter-offer around $10M is added."]}},
+  plane:{prompt:"'New daily route' wording is added.", clarify:[1],
+    steps:{"Sanity check":["added","Competitor fares are new."],"The empty seats":["added","The tour-operator offer is new."],"Recommendation":["added"]}},
+  energy:{prompt:"The 10% target, 5% growth and subsidies are added.", clarify:[0,1,2,3],
+    steps:{"Where the energy goes":["added","Both exhibits are new."],"Size one lever":["added"],"The politics":["added"],"Recommendation":["added"]}},
+  bank:{prompt:"The $1.0B → $900M revenue totals are added.", clarify:[1,2,3],
+    steps:{"Which category?":["partly","The % mix is from the casebook; the dollar totals are added."],"Customers or price?":["added"],"Why are they leaving?":["added"],"Is it enough?":["partly","$18.75M and $24M are from the casebook; the comparison with the $100M gap is added."],"Recommendation":["partly","Cross-selling is the casebook's answer; fixing churn is added."]}},
+  crypto:{prompt:"The banking-crisis context is added.", clarify:[0,3],
+    steps:{"Payback":["added","The $5M investment and 3-year goal are new."],"Stress test":["partly","Reasons for the 10% margin are from the casebook; the users-needed math is added."],"Recommendation":["partly","The casebook's caveats are kept; the pilot and the 126k-user threshold are added."]}},
+  hair:{prompt:"'Just approved, first market' and the payoff question are added.", clarify:[3,4],
+    steps:{"Will it pay off?":["partly","The casebook raises R&D cost and price risk in words; the cost exhibit and profit math are added."],"Recommendation":["added"]}}
+};
