@@ -72,6 +72,13 @@ format as the example:
     what is new
 Steps that only use source material get no entry.
 
+G. Write sample answers
+Add window.CASE_SCRIPTS in the same format as the example. For each case:
+- open: what a strong candidate says first (a short playback plus 3-4 clarifying questions)
+- steps: for every step, keyed by its exact name, a polished spoken answer of 60-150 words
+- Answer first, use signposting ("I'd look at three areas", "So what:"), say the math
+  out loud, and wrap phrases worth memorizing in <b></b>.
+
 Output the complete cases.js file.
 ```
 

@@ -129,6 +129,11 @@ th{font-weight:600}
 .addtag{display:inline-block;font-family:var(--body);font-size:.64rem;letter-spacing:.07em;text-transform:uppercase;font-weight:700;padding:1px 7px;border-radius:999px;border:1px solid currentColor;color:var(--warn);margin-left:6px;vertical-align:middle;font-style:normal}
 .addnote{font-family:var(--body);font-size:.8rem;color:var(--muted);font-style:italic;margin-top:6px}
 .hidebtn{margin-left:8px;padding:1px 9px;font-size:.72rem;letter-spacing:0;text-transform:none;font-weight:500;color:inherit;border-color:currentColor;opacity:.75;background:transparent}
+.script{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:6px;padding:12px 16px;display:grid;gap:8px}
+.script .lbl{color:var(--accent)}
+.script p{font-family:var(--display);font-size:1.06rem;line-height:1.55}
+.script b{background:color-mix(in srgb,var(--accent) 14%,transparent);padding:0 2px;border-radius:3px}
+.scriptbtn{justify-self:start}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chips button{border-radius:999px;font-size:.88rem}
 .chips button.asked{background:var(--iv);color:var(--muted)}
@@ -210,6 +215,9 @@ const SRC=window.CASE_SOURCE||"the source", ADD=window.CASE_ADDITIONS||{};
 const addStep=(c,name)=>((ADD[c.id]||{}).steps||{})[name];
 const addClar=(c,j)=>((ADD[c.id]||{}).clarify||[]).includes(j);
 const addTag=k=>k?`<span class="addtag" title="Not in ${SRC}">${k==="partly"?"Partly added":"Added"}</span>`:"";
+const SCRIPTS=window.CASE_SCRIPTS||{};
+const scriptOf=(c,name)=>((SCRIPTS[c.id]||{}).steps||{})[name];
+function scriptHTML(r,key,html){if(!html)return "";return r.seen[key]?`<div class="script"><span class="lbl">Sample answer, said out loud <button class="small ghost hidebtn" data-hide="${key}">Hide</button></span>${html}</div>`:`<button class="small scriptbtn" data-reveal="${key}">Reveal sample answer</button>`}
 const addNote=(txt)=>txt?`<p class="addnote">Beyond ${SRC}: ${txt}</p>`:"";
 /* ---------- app state ---------- */
 let view={name:"home"}, filter="All", ivMode=false, tick=null, fitTick=null;
@@ -274,7 +282,7 @@ function stepHTML(c,s,i,isCurrent){
    </div>
    ${hints&&!seenAns?`<div class="iv"><span class="who">Interviewer · hint ${ivMode?"":`<button class="small ghost hidebtn" data-hide="h${k}">Hide</button>`}</span><div class="say">${st.stuck.slice(0,hints).map(h=>`<p>${h}</p>`).join("")}</div></div>`:""}
    ${st.give&&seenData?`<div class="data"><span class="lbl">Interviewer hands you ${ivMode?"":`<button class="small ghost hidebtn" data-hide="d${k}">Hide</button>`}</span>${st.give.html}</div>`:""}
-   ${seenAns?`<div class="answer"><span class="lbl">Model answer ${ivMode?"":`<button class="small ghost hidebtn" data-hide="a${k}">Hide</button>`}</span>${st.key||""}${st.listen?`<p><b>A strong answer covers:</b></p><ul>${st.listen.map(l=>`<li>${l}</li>`).join("")}</ul>`:""}</div>`:""}
+   ${seenAns?`<div class="answer"><span class="lbl">Model answer ${ivMode?"":`<button class="small ghost hidebtn" data-hide="a${k}">Hide</button>`}</span>${st.key||""}${st.listen?`<p><b>A strong answer covers:</b></p><ul>${st.listen.map(l=>`<li>${l}</li>`).join("")}</ul>`:""}${scriptHTML(r,"s"+k,scriptOf(c,st.name))}</div>`:""}
   </div>`;
 }
 
@@ -285,7 +293,7 @@ function renderCase(){
   let turns=`<div class="turn"><div class="iv"><span class="who">Interviewer</span><div class="say">${c.prompt.map(l=>`<p>${l}</p>`).join("")}<p><i>What questions do you have before you start?</i></p></div>${addNote((ADD[c.id]||{}).prompt)}</div>
    <div class="you"><label class="youlbl" for="ans-${c.id}-q">Your clarifying questions</label>
    <textarea id="ans-${c.id}-q" data-ans="q" placeholder="Write your own questions first…">${esc(s.ans.q||"")}</textarea>
-   <div class="chips">${c.clarify.map((q,j)=>`<button class="${rv(c.id).asked.includes(j)||ivMode?"asked":""}" data-ask="${j}">${q[0]}${addClar(c,j)?addTag("added"):""}</button>`).join("")}</div></div>
+   <div class="chips">${c.clarify.map((q,j)=>`<button class="${rv(c.id).asked.includes(j)||ivMode?"asked":""}" data-ask="${j}">${q[0]}${addClar(c,j)?addTag("added"):""}</button>`).join("")}</div>${scriptHTML(rv(c.id),"o",(SCRIPTS[c.id]||{}).open).replace("Reveal sample answer","Reveal sample opening")}</div>
    ${c.clarify.map((q,j)=>(rv(c.id).asked.includes(j)||ivMode)?`<div class="iv"><span class="who">Interviewer · ${esc(q[0])}${addClar(c,j)?addTag("added"):""}</span><p>${q[1]}</p></div>`:"").join("")}
   </div>`;
   for(let i=0;i<shown;i++)turns+=stepHTML(c,s,i,i===shown-1);
