@@ -20,8 +20,15 @@ file (cases.js) showing the exact data format I need.
 Turn every case in the casebook into an entry in a new cases.js, in exactly the
 same format as the example. Then follow these rules.
 
-A. Keep the source intact
+A. Follow the source closely
 - Keep every number, exhibit and question from the casebook. Never change a source figure.
+- Use every "Additional Information" item, as a clarifying answer or an exhibit. Nothing is dropped.
+- Where the casebook gives a sample framework, use its buckets and bullets as the model answer.
+- Turn every casebook question into its own step, in the casebook's order, and keep its
+  interviewer notes ("guide the candidate to...", "tell them the problem is only internal").
+- Break the framework down the way a real interviewer would, with short steps such as
+  "What revenue streams could X have?", "What costs?", "Which are fixed vs. variable?",
+  before any math. Use the casebook's own lists as the answers.
 - Fix only obvious typos in the source (e.g. "$60M" where the math says $60B), and tell me which.
 
 B. Make it run like a real interview
@@ -43,7 +50,11 @@ For each case, add only what a real interviewer would have:
    risks, next steps).
 8. 6-9 steps per case, 20-25 minutes in total.
 
-C. Every step contains
+C. Every step contains (interviewer-only fields marked *)
+- steer*: the casebook's guidance on where to lead the candidate at this point
+- probe*: 1-3 follow-up questions to ask when the answer is thin
+- check*: the complete casebook list to tick against (all revenue streams, costs, barriers...)
+- ifwrong*: common wrong answers and exactly what to reply, as [they say, you say] pairs
 - say: the interviewer's exact words
 - give: an exhibit plus WHEN to hand it over (optional)
 - num: the correct number with a tolerance, or a min-max range (only for numeric answers)

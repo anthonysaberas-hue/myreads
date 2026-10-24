@@ -70,6 +70,9 @@ textarea{font:inherit;width:100%;min-height:70px;border:1px solid var(--line);bo
 .flag{background:var(--flag);border-color:var(--flag-bar)} .flag .tag{color:var(--flag-bar)}
 .plain{background:var(--paper);border-color:var(--line);border:1px solid var(--line);border-left:4px solid var(--line)}
 .plain .tag{color:var(--muted)}
+.steer{background:var(--accent-soft);border-color:var(--accent)} .steer .tag{color:var(--accent)}
+.ifw td:first-child{width:40%;color:var(--muted)}
+
 .asks td:first-child{width:42%;color:var(--muted)}
 .asks td:last-child{font-family:var(--display);font-size:1.05rem}
 .check{display:grid;gap:6px;list-style:none;padding:0}
@@ -153,6 +156,8 @@ const GUIDE = [
 <div class="blk give"><span class="tag">Give only when…</span><p>Data you hand over (read it, or show this box) only when the trigger happens.</p></div>
 <div class="blk key"><span class="tag">Answer key, don't show</span><p>The right numbers and what a strong answer contains.</p></div>
 <div class="blk flag"><span class="tag">If they're stuck</span><p>Hints in order. Give one, wait 30 seconds, then the next.</p></div>
+<div class="blk steer"><span class="tag">How to steer</span><p>What the casebook says to do at this point, e.g. "after their framework, tell them the problem is only internal." Follow it so the case goes where it should.</p></div>
+<div class="blk plain"><span class="tag">Full list · Ask if thin · If they say…</span><p>A complete checklist to tick (so you see exactly what they missed), follow-up questions to dig deeper when an answer is short, and replies to common mistakes. Use probes before hints: probes make them think, hints give the answer away.</p></div>
 <p><span class="addtag" style="margin-left:0">Added</span> <span class="addtag">Partly added</span> mark steps, data and answers that go beyond ${window.CASE_SOURCE||"the source"}. A line under the step says exactly what was added.</p></div>
 <div class="panel"><h3>Before you start (2 minutes)</h3><ul class="check">
 <li><label><input type="checkbox">Pick a case you haven't read with them. Start with an <b>Easy</b> one.</label></li>
@@ -295,8 +300,12 @@ function caseHTML(c,ci){
     h+=`<section class="step"><div class="stephead"><h3><span class="stepno">${i+1}</span>${p.name}${addTag(p.add&&p.add[0])}</h3><span class="t">${p.time}</span></div>${p.add&&p.add[1]?addNote(p.add[1]):""}`;
     h+=`<div class="blk say"><span class="tag">Say</span>${p.say.map(l=>`<p class="line">"${l}"</p>`).join("")}</div>`;
     if(p.asks)h+=`<div class="blk plain"><span class="tag">If they ask… you answer</span><div class="tw"><table class="asks">${p.asks.map((a,j)=>`<tr><td>${a[0]}${i===0&&addClar(c,j)?addTag("added"):""}</td><td>"${a[1]}"</td></tr>`).join("")}<tr><td>Anything else</td><td>"Not important for this case. Make an assumption."</td></tr></table></div></div>`;
+    if(p.steer)h+=`<div class="blk steer"><span class="tag">How to steer</span><ul>${p.steer.map(x=>`<li>${x}</li>`).join("")}</ul></div>`;
     if(p.give)h+=`<div class="blk give"><span class="tag">Give only when: ${p.give.when}</span>${p.give.html}</div>`;
     if(p.listen)h+=`<div class="blk plain"><span class="tag">Listen for: tick what you hear</span><ul class="check">${p.listen.map((l,j)=>{const id=`${c.id}-${i}-${j}`;return `<li><label><input type="checkbox" id="ck-${id}" data-ck="${id}" ${s.ck&&s.ck[id]?"checked":""}><span>${l}</span></label></li>`}).join("")}</ul></div>`;
+    if(p.check)h+=`<div class="blk plain"><span class="tag">Full list from ${SRC}: tick what they covered</span><ul class="check">${p.check.map((l,j)=>{const id=`${c.id}-${i}-k${j}`;return `<li><label><input type="checkbox" id="ck-${id}" data-ck="${id}" ${s.ck&&s.ck[id]?"checked":""}><span>${l}</span></label></li>`}).join("")}</ul></div>`;
+    if(p.probe)h+=`<div class="blk plain"><span class="tag">Ask if their answer is thin</span><ul>${p.probe.map(x=>`<li>${x}</li>`).join("")}</ul></div>`;
+    if(p.ifwrong)h+=`<div class="blk plain"><span class="tag">If they say… you say</span><div class="tw"><table class="asks ifw">${p.ifwrong.map(w=>`<tr><td>${w[0]}</td><td>${w[1]}</td></tr>`).join("")}</table></div></div>`;
     if(p.key)h+=`<div class="blk key"><span class="tag">Answer key, don't show</span>${p.key}</div>`;
     if(p.stuck)h+=`<div class="blk flag"><span class="tag">If they're stuck: one hint at a time</span><ol>${p.stuck.map(x=>`<li>${x}</li>`).join("")}</ol></div>`;
     h+=`</section>`;

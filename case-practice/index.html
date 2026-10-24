@@ -169,7 +169,7 @@ const SCORE_DIMS = [
 ];
 
 /* ---------- storage (per-viewer convenience only) ---------- */
-const KEY="case-room-v2";
+const KEY="case-room-v3";
 let store={};
 try{store=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){store={}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
