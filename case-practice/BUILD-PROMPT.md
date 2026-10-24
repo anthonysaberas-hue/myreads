@@ -90,6 +90,14 @@ Add window.CASE_SCRIPTS in the same format as the example. For each case:
 - Answer first, use signposting ("I'd look at three areas", "So what:"), say the math
   out loud, and wrap phrases worth memorizing in <b></b>.
 
+H. Show what a good answer looks like
+Add window.CASE_GUIDE in the same format as the example. For each case:
+- steps: for every step (keyed by its exact name), "shape" = the structure of a strong
+  answer as 3-5 ordered items, and "phrases" = 2-3 exact phrases worth reusing
+- book8: the framework built with the 8 buckets from "Hacking the Case Interview"
+  (3-4 buckets, each with 2-3 tailored sub-bullets) plus a one-line note on how it
+  differs from the casebook's framework
+
 Output the complete cases.js file.
 ```
 

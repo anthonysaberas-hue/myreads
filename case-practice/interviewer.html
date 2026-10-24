@@ -102,6 +102,23 @@ textarea{font:inherit;width:100%;min-height:70px;border:1px solid var(--line);bo
 .toc button b{font-family:var(--display);font-size:1.12rem;font-weight:600}
 .addtag{display:inline-block;font-family:var(--body);font-size:.64rem;letter-spacing:.07em;text-transform:uppercase;font-weight:700;padding:1px 7px;border-radius:999px;border:1px solid currentColor;color:var(--give-bar);margin-left:8px;vertical-align:middle;font-style:normal}
 .addnote{font-size:.84rem;color:var(--muted);font-style:italic}
+.xans{border:1px dashed var(--line);border-radius:8px;padding:8px 12px}
+.xans summary{cursor:pointer;font-weight:600;color:var(--accent)}
+.xans[open] summary{margin-bottom:8px}
+.xbody{display:grid;gap:8px}
+.xbody ol{margin:0;padding-left:20px}
+.xlbl{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.xscript{font-family:var(--display);font-size:1.05rem;line-height:1.55;border-left:3px solid var(--accent);padding-left:12px}
+.xscript b,.cand b{background:var(--accent-soft);padding:0 2px;border-radius:3px}
+.b8grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.b8{border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:.9rem}
+.b8 ul{margin:4px 0 0;padding-left:18px}
+.tline{display:grid;gap:4px;padding:8px 0;border-bottom:1px solid var(--line)}
+.tline .who{font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.tline .said{font-family:var(--display);font-size:1.02rem}
+.tline.cand{padding-left:14px;border-left:3px solid var(--accent)}
+.tline.cand p{font-family:var(--display);font-size:1.02rem;line-height:1.55}
+.tgive{background:var(--give);border-radius:6px;padding:8px 12px;font-size:.9rem}
 .printonly{display:none}
 .navrow{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 @media (max-width:520px){h1{font-size:1.9rem}.asks td:first-child{width:auto}.asks tr{display:grid}.asks td{border:0;padding:3px 0}.asks tr{border-bottom:1px solid var(--line);padding:6px 0}}
@@ -279,6 +296,22 @@ const SRC=window.CASE_SOURCE||"the source", ADD=window.CASE_ADDITIONS||{};
 const addStep=(c,name)=>((ADD[c.id]||{}).steps||{})[name];
 const addClar=(c,j)=>((ADD[c.id]||{}).clarify||[]).includes(j);
 const addTag=k=>k?`<span class="addtag" title="Not in ${SRC}">${k==="partly"?"Partly added":"Added"}</span>`:"";
+
+const SCRIPTS=window.CASE_SCRIPTS||{}, CGUIDE=window.CASE_GUIDE||{};
+const xScript=(c,name)=>((SCRIPTS[c.id]||{}).steps||{})[name];
+const xGuide=(c,name)=>((CGUIDE[c.id]||{}).steps||{})[name];
+function exampleHTML(c,p,i){
+  const sc=i===0?(SCRIPTS[c.id]||{}).open:xScript(c,p.name), g=i===0?null:xGuide(c,p.name);
+  if(!sc&&!g)return "";
+  const shape=g?`<p class="xlbl">How a strong answer is structured</p><ol>${g.shape.map(x=>`<li>${x}</li>`).join("")}</ol>${g.phrases&&g.phrases.length?`<p><b>Phrases to listen for:</b> ${g.phrases.join(" · ")}</p>`:""}`:"";
+  return `<details class="xans"><summary>Show example answer</summary><div class="xbody">${shape}${sc?`<p class="xlbl">Example answer, said out loud</p><div class="xscript">${sc}</div>`:""}</div></details>`}
+function book8HTML(c){const b=(CGUIDE[c.id]||{}).book8;if(!b)return "";
+  return `<details class="xans"><summary>Book's 8-bucket version also counts</summary><div class="xbody"><p>If the candidate uses the 8 buckets from <i>Hacking the Case Interview</i>, this is a strong version. Credit it like the casebook's framework.</p><div class="b8grid">${b.buckets.map(([n,s])=>`<div class="b8"><b>${n}</b><ul>${s.map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("")}</div><p class="addnote">${b.note}</p></div></details>`}
+function fullInterviewHTML(c){const S=SCRIPTS[c.id]||{};if(!S.steps)return "";
+  let h=`<div class="tline"><p class="who">Interviewer</p>${c.prompt.map(l=>`<p class="said">"${l}"</p>`).join("")}</div>${S.open?`<div class="tline cand"><p class="who">Candidate</p>${S.open}</div>`:""}`;
+  c.steps.forEach(st=>{const sc=S.steps[st.name];h+=`<div class="tline"><p class="who">Interviewer · ${st.name}</p>${st.say.map(l=>`<p class="said">"${l}"</p>`).join("")}${st.give?`<div class="tgive">${st.give.html}</div>`:""}</div>${sc?`<div class="tline cand"><p class="who">Candidate</p>${sc}</div>`:""}`});
+  return `<details class="xans full"><summary>Show the full sample interview</summary><div class="xbody">${h}</div></details>`}
+window.addEventListener("beforeprint",()=>document.querySelectorAll("details.xans").forEach(d=>d.open=true));
 const addNote=(txt)=>txt?`<p class="addnote">Beyond ${SRC}: ${txt}</p>`:"";
 /* ===================== RENDER ===================== */
 const KEY="interviewer-binder-v3";
@@ -308,8 +341,11 @@ function caseHTML(c,ci){
     if(p.ifwrong)h+=`<div class="blk plain"><span class="tag">If they say… you say</span><div class="tw"><table class="asks ifw">${p.ifwrong.map(w=>`<tr><td>${w[0]}</td><td>${w[1]}</td></tr>`).join("")}</table></div></div>`;
     if(p.key)h+=`<div class="blk key"><span class="tag">Answer key, don't show</span>${p.key}</div>`;
     if(p.stuck)h+=`<div class="blk flag"><span class="tag">If they're stuck: one hint at a time</span><ol>${p.stuck.map(x=>`<li>${x}</li>`).join("")}</ol></div>`;
+    h+=exampleHTML(c,p,i);
+    if(/framework|approach/i.test(p.name)&&i===steps.findIndex(x=>/framework|approach/i.test(x.name)))h+=book8HTML(c);
     h+=`</section>`;
   });
+  const fi=fullInterviewHTML(c); if(fi)h+=`<section class="step">${fi}</section>`;
   h+=`<section class="step score"><h3>Score this case</h3><p class="muted">Use the ticks above and the <a href="#rubric" data-go="rubric">rubric</a>. 3 = would pass.</p>
   ${DIMS.map(([d,hint])=>`<div class="srow"><b>${d}</b><div class="dots" role="group" aria-label="${d}">${[1,2,3,4,5].map(n=>`<button data-score="${c.id}|${d}" data-n="${n}" aria-pressed="${!!(s.sc&&s.sc[d]===n)}">${n}</button>`).join("")}</div><small>${hint}</small></div>`).join("")}
   <p>Total: <span class="total" id="tot-${c.id}">${total(c.id)}</span> / 25</p>

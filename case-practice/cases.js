@@ -775,7 +775,7 @@ diapers:{
 hotdog:{
  open:"<p><b>Just to play it back</b>: our client owns one hot dog stand in Hamra, profitability has declined over the past few months, and this month it lost money. <b>The goal is to find the problem and fix it.</b> A few questions: what do they sell, and at what price? Is the competition seeing the same decline? And is there a profit target?</p>",
  steps:{
-  "Framework":"<p><b>This is a profitability problem, so I'll start from profit equals revenue minus costs.</b> On <b>revenue</b>: the price, the number of meals sold, and any other revenue streams. On <b>costs</b>: fixed costs, like the truck, and variable costs: food, utilities, rent, labor and any waste. <b>Externally</b>, Frank's is doing fine, so <b>my hypothesis is that the problem is specific to our stand</b>. I'd compute this month's profit, then compare it with the past to see what changed.</p>",
+  "Framework":"<p><b>This is a profitability problem, so I'll start from profit equals revenue minus costs.</b> On <b>revenue</b>: the price, the number of meals sold, and any other revenue streams. On <b>costs</b>: fixed costs, like the truck, and variable costs: food, utilities, rent, labor and any waste. <b>Externally</b>, Frank's is doing fine, so <b>my hypothesis is that the problem is specific to our stand</b>. I'd compute this month's profit, then compare it with the past to see what changed. <b>Does that sound good?</b></p>",
   "Revenue streams":"<p><b>Today it's the standard meal</b>, a hot dog and a drink. <b>Other streams could include</b> advertising on the truck, a delivery service, paid toppings, and new menu items. <b>For now I'll focus on the standard meal</b>, and keep the others for when we talk about growth.</p>",
   "Monthly revenue":"<p><b>I'd estimate</b> about 15 meals a day for a small stand. At $6 a meal, that's $90 a day, and over 30 days, <b>$2,700 a month</b>.</p>",
   "Cost structure":"<p><b>Before looking at the list</b>, I'd expect food, the chef's salary, rent, utilities, and some wasted food. The truck itself is a fixed cost, already paid. A 3× pricing strategy means the price is three times the food cost, so <b>food costs $2 a meal</b>. <b>Strictly, rent and salary are fixed each month</b>, but they're all operating costs either way.</p>",
@@ -789,7 +789,7 @@ hotdog:{
 concert:{
  open:"<p><b>To recap</b>: our client is an entertainment company that wants to host a one-night concert in Riyadh with a famous DJ, and needs to decide <b>whether it's a good idea</b> within two weeks. A few questions: <b>how do they define success</b>, is there a profit target? What's the venue capacity? And do we have data from their past events?</p>",
  steps:{
-  "Framework":"<p><b>I'd look at three areas.</b> First, <b>profitability</b>: revenues from tickets, sponsors and extras, minus fixed costs like the DJ and venue and variable costs like commissions. Second, <b>demand</b>: how many tickets will realistically sell. Third, <b>feasibility</b>: the license, local regulations and cultural fit. <b>I'd then compare expected profit with their $10,000 threshold.</b></p>",
+  "Framework":"<p><b>I'd look at three areas.</b> First, <b>profitability</b>: revenues from tickets, sponsors and extras, minus fixed costs like the DJ and venue and variable costs like commissions. Second, <b>demand</b>: how many tickets will realistically sell. Third, <b>feasibility</b>: the license, local regulations and cultural fit. <b>I'd then compare expected profit with their $10,000 threshold.</b> <b>Does that sound good?</b></p>",
   "Revenue streams":"<p><b>The core streams are tickets, by tier, and sponsorships.</b> On top of that, events can earn from <b>food carts and non-alcoholic drinks, merchandise like glow sticks and t-shirts, DJ memorabilia, and valet parking</b>. I'd start with tickets and sponsors, and keep the extras as upside.</p>",
   "Full-house revenue":"<p>VIP is 400 tickets at $50, so $20,000. Regular is 600 at $20, so $12,000. Sponsors add $6,000. <b>Total revenue at a full house is $38,000.</b></p>",
   "Costs and profit":"<p><b>I'll split costs into fixed and variable.</b> Fixed: DJ $6,000, venue $5,000, maintenance and insurance $4,000, operations $4,200, so $19,200. Variable: $3 commission on 1,000 tickets, $3,000. Total costs $22,200, <b>so profit is $15,800</b>, <b>above the $10,000 bar if it sells out.</b></p>",
@@ -801,7 +801,7 @@ concert:{
 banker:{
  open:"<p><b>Let me make sure I have it</b>: our client made their fortune in real estate, has up to $25 million, and is considering entering Saudi banking. <b>The questions are whether to do it, and what to consider.</b> Could I ask: do they have banking experience? Are there regulations in the way? And why banking?</p>",
  steps:{
-  "Framework":"<p><b>I'd look at three areas.</b> <b>Competitors</b>: who they are, how established they are in KSA, whether they share our client's goals, and market trends. <b>Barriers to entry</b>: whether we need a Saudi partner for Saudization, and government regulations. <b>Market size and share</b>: what share our client could realistically win, and competitors' shares.</p>",
+  "Framework":"<p><b>I'd look at three areas.</b> <b>Competitors</b>: who they are, how established they are in KSA, whether they share our client's goals, and market trends. <b>Barriers to entry</b>: whether we need a Saudi partner for Saudization, and government regulations. <b>Market size and share</b>: what share our client could realistically win, and competitors' shares. <b>Does that sound good?</b></p>",
   "The market":"<p><b>Two takeaways.</b> The market is attractive: profits are growing about 6% a year. But it's <b>highly concentrated</b>, with the top five holding 75% of deposits, so winning share from scratch is hard. <b>The opportunity is in faster-growing niches</b> like digital banking and small-business lending.</p>",
   "Ways to enter":"<p><b>There are two main ways in.</b> One, <b>build</b>: open a new bank from scratch. Two, <b>buy</b>: acquire an existing player. A third, softer option would be a partnership. <b>I'd compare the first two on profitability and risk.</b></p>",
   "Profitability of each":"<p><b>Option 1</b> earns 22% of $10 million, $2.2 million a year, so 15 divided by 2.2 is <b>about 6.8 years</b>. <b>Option 2</b> is $20 million for $2.5 million a year, <b>8 years</b>. <b>On payback alone, building looks faster.</b></p>",
@@ -813,7 +813,7 @@ banker:{
 tv:{
  open:"<p><b>So, to recap</b>: a Dubai family business with restaurants and a bus company wants to acquire a TV channel, and <b>wants a payback in under five years.</b> A couple of questions: how does the channel make money? Do they have the expertise and money? And are there regulatory barriers?</p>",
  steps:{
-  "Framework":"<p><b>I'd look at three areas.</b> <b>The client</b>: financial capability, expertise, and any conflicts of interest with their other businesses. <b>The market</b>: competitors, market leaders, our potential share, and barriers such as regulations or antitrust. <b>Profitability</b>: revenue streams, prices and volume; and costs, meaning the initial investment, fixed and variable costs. <b>Since payback is the deal-breaker, I'd focus on profitability.</b></p>",
+  "Framework":"<p><b>I'd look at three areas.</b> <b>The client</b>: financial capability, expertise, and any conflicts of interest with their other businesses. <b>The market</b>: competitors, market leaders, our potential share, and barriers such as regulations or antitrust. <b>Profitability</b>: revenue streams, prices and volume; and costs, meaning the initial investment, fixed and variable costs. <b>Since payback is the deal-breaker, I'd focus on profitability.</b> <b>Does that sound good?</b></p>",
   "Revenue streams":"<p><b>A TV channel can earn from</b> advertising, subscriptions, and packages or bundles with other channels. <b>Since this channel earns only from ads</b>, subscriptions are a lever we could add later.</p>",
   "Maximum ad revenue":"<p><b>I'll go bottom-up, peak and non-peak separately.</b> Peak: $250 a minute, 10 minutes an hour, 4 hours, 300 days, so <b>$3 million</b>. Non-peak: $100, 10 minutes, 20 hours, 300 days, so <b>$6 million</b>. <b>Total: $9 million a year.</b></p>",
   "Payback":"<p>$9 million minus $6 million of costs is <b>$3 million of profit</b>. $15 million divided by $3 million is <b>exactly five years</b>. <b>That just misses their goal of less than five.</b></p>",
@@ -826,7 +826,7 @@ tv:{
 plane:{
  open:"<p><b>To make sure I understand</b>: our client, a Dubai airline, is preparing a Dubai–Paris flight on a 300-seat plane and <b>wants the ticket price that maximizes profit</b>. Questions: is it a single cabin class? Do we know how demand changes with price? And what does a flight cost?</p>",
  steps:{
-  "Approach":"<p><b>This is a pricing problem, so I'll express profit as a function of the ticket price.</b> Revenue is price times seats sold, and seats depend on price, so I need a demand relationship. Costs are fixed plus variable per passenger. <b>Then I'll find the price where profit peaks</b>, and sanity-check it.</p>",
+  "Approach":"<p><b>This is a pricing problem, so I'll express profit as a function of the ticket price.</b> Revenue is price times seats sold, and seats depend on price, so I need a demand relationship. Costs are fixed plus variable per passenger. <b>Then I'll find the price where profit peaks</b>, and sanity-check it. <b>Does that sound good?</b></p>",
   "Revenue streams":"<p><b>Besides the ticket itself</b>, an airline earns from extra luggage charges, amenities like meals, Wi-Fi and seat selection, advertising on board, a companion fee for minors traveling alone, and pet fees. <b>For the ticket price question, I'll focus on the ticket</b>, and keep the rest as upside.</p>",
   "Costs":"<p><b>The main costs are</b> fuel, labor for pilots and crew, maintenance, airport fees and taxes, insurance, marketing, and the cost of food and drinks served on board.</p>",
   "Fixed vs. variable":"<p><b>Most of these are fixed per flight</b>: crew, maintenance, marketing, insurance, landing fees and most of the fuel. <b>A few grow with each passenger</b>: meals, passenger taxes, and a little extra fuel for the weight. <b>So costs equal $10,000 plus $500 times seats sold.</b></p>",
@@ -840,7 +840,7 @@ plane:{
 energy:{
  open:"<p><b>Let me recap</b>: the Ministry of Energy wants a program to <b>reduce the country's overall energy consumption</b>, ideally by 10% within five years. Consumption is growing about 5% a year and energy is heavily subsidized. Questions: is the 10% against today's level? Are there political constraints? And do we have data by sector?</p>",
  steps:{
-  "Framework":"<p><b>I'd structure it in four buckets.</b> One, <b>the major consumption sectors</b>: residential, commercial and entertainment, industrial, and transportation. Two, <b>consumption reduction</b>: ways to cut use in each sector. Three, <b>feasibility</b>: engineering, expertise and available technology. Four, <b>profitability</b>: a cost-benefit analysis, including non-financial benefits like lower CO₂ and cleaner air.</p>",
+  "Framework":"<p><b>I'd structure it in four buckets.</b> One, <b>the major consumption sectors</b>: residential, commercial and entertainment, industrial, and transportation. Two, <b>consumption reduction</b>: ways to cut use in each sector. Three, <b>feasibility</b>: engineering, expertise and available technology. Four, <b>profitability</b>: a cost-benefit analysis, including non-financial benefits like lower CO₂ and cleaner air. <b>Does that sound good?</b></p>",
   "Where the energy goes":"<p><b>Residential is the biggest sector at 40%</b>, and air conditioning is 70% of that. <b>So home AC alone is about 28% of national consumption</b>, the single biggest target. <b>I'd start there.</b></p>",
   "Homes, offices and venues":"<p><b>I'd use three types of levers.</b> <b>Price</b>: raise the cost of electricity per kilowatt-hour. <b>Efficiency</b>: free installation and discounts on energy-efficient appliances, and consolidating cooling systems in buildings. <b>Smarter use</b>: sensors that switch lights off in empty rooms, and removing unnecessary bulbs.</p>",
   "Size one lever":"<p>40% times 70% times 30% of homes times 30% savings is <b>about 2.5% of national consumption</b>. <b>So what:</b> one ambitious program delivers only a quarter of the target. <b>We'll need a package of measures.</b></p>",
@@ -852,7 +852,7 @@ energy:{
 bank:{
  open:"<p><b>To recap</b>: our client is one of the largest retail banks in KSA, and <b>revenues have declined for two years</b>. We need to find the reason and a solution. Questions: how is revenue split across products? How have competitors done? And has anything changed in regulation?</p>",
  steps:{
-  "Framework":"<p><b>I'd take an external-internal approach.</b> <b>Externally</b>: economic factors like lower disposable income, interest rates and new regulation; and market factors: are competitors facing the same issue, what do they offer, and how have market shares moved? <b>Internally</b>: our revenue streams, prices and fees, volume of customers, and product mix. <b>The mix table already hints that personal loans and cards are shrinking.</b></p>",
+  "Framework":"<p><b>I'd take an external-internal approach.</b> <b>Externally</b>: economic factors like lower disposable income, interest rates and new regulation; and market factors: are competitors facing the same issue, what do they offer, and how have market shares moved? <b>Internally</b>: our revenue streams, prices and fees, volume of customers, and product mix. <b>The mix table already hints that personal loans and cards are shrinking.</b> <b>Does that sound good?</b></p>",
   "Which category?":"<p><b>Category 1, personal loans and cards</b>, and for two reasons: <b>its share fell from 55% to 50%, and the total revenue fell too</b>, so it definitely shrank in dollars. <b>For categories 2 and 3, it's undetermined</b>: they're a bigger share of a smaller total, so in dollars they could have gone up or down. <b>I'd need the actual totals to tell.</b></p>",
   "In dollars":"<p>Category 1 went from 55% of $1 billion, $550 million, to 50% of $900 million, $450 million: <b>down $100 million</b>. Car loans went from $280 to $270 million, down $10 million, and house loans from $170 to $180 million, up $10 million. <b>So Category 1 explains the entire decline.</b></p>",
   "Customers or price?":"<p><b>It's customers.</b> We lost 100,000, about 17%, while revenue per customer barely moved. <b>So this is a churn problem, not a pricing problem.</b> The next question is where they went.</p>",
@@ -866,7 +866,7 @@ bank:{
 crypto:{
  open:"<p><b>Let me play that back</b>: our client is a startup that wants to create a cryptocurrency for use in Lebanon, where trust in banks is low. <b>The question is whether it's a good idea.</b> A few questions: does the client have the expertise and funding? Who are the competitors? And what does success look like for them?</p>",
  steps:{
-  "Framework":"<p><b>I'd look at three areas.</b> <b>The client</b>: crypto expertise and the financial capability to back the idea. <b>The market</b>: the size of crypto in Lebanon, competitors and their shares, and barriers like legislation, regulation and access to distribution. <b>Profitability</b>: revenue from fixed fees and transaction commissions, prices and expected volume; and costs: the initial investment and operating expenses.</p>",
+  "Framework":"<p><b>I'd look at three areas.</b> <b>The client</b>: crypto expertise and the financial capability to back the idea. <b>The market</b>: the size of crypto in Lebanon, competitors and their shares, and barriers like legislation, regulation and access to distribution. <b>Profitability</b>: revenue from fixed fees and transaction commissions, prices and expected volume; and costs: the initial investment and operating expenses. <b>Does that sound good?</b></p>",
   "Key factors":"<p><b>Whether someone uses crypto depends on</b> their age, income, risk appetite, tech literacy, ability to trade, and knowledge of crypto. <b>I'd segment by age first, then by income</b>, since those are the easiest to estimate.</p>",
   "How many users?":"<p>Six million people in four age groups is 1.5 million each. 10% of the youngest is 150,000; 25% of 21 to 40 is 375,000; 5% of 41 to 60 is 75,000; and none over 60. <b>That's 600,000 crypto users.</b> Bitcoin has 60%, so the untapped 40% is about <b>240,000 people. That's our maximum available market.</b></p>",
   "Transactions":"<p>High income: 24,000 people at 7 a week, 168,000. Middle: 120,000 at 3, 360,000. Low: 96,000 at 1, 96,000. <b>About 624,000 transactions a week.</b></p>",
@@ -879,7 +879,7 @@ crypto:{
 hair:{
  open:"<p><b>So, to recap</b>: our client has created a pill that reverses hair loss and wants to sell it in Lebanon. <b>The goal is to estimate first-year revenue.</b> Questions: how many pills does a patient need? Are there competitors? And what do the alternatives cost?</p>",
  steps:{
-  "Framework":"<p><b>Revenue is price times volume, so I'd structure it in those two buckets.</b> <b>Price</b>: the price per pill, how many pills a full treatment needs, and the pricing strategy: cost-based, value-based or competitor-based. <b>Volume</b>: the market size in Lebanon and the share we could win.</p>",
+  "Framework":"<p><b>Revenue is price times volume, so I'd structure it in those two buckets.</b> <b>Price</b>: the price per pill, how many pills a full treatment needs, and the pricing strategy: cost-based, value-based or competitor-based. <b>Volume</b>: the market size in Lebanon and the share we could win. <b>Does that sound good?</b></p>",
   "Pricing strategy":"<p><b>I'd combine value-based and competitor-based pricing.</b> <b>Value</b>: one pill cures hair loss for life, which is worth a lot to patients. <b>Competitors</b>: transplants at $5,000 are the reference customers will compare against. <b>Cost-based pricing wouldn't capture that value</b>, since the pill is cheap to make.</p>",
   "Price":"<p><b>I'd price it at 1.5 to 2 times a transplant</b>, so <b>$7,500 to $10,000</b>, starting toward the lower end because incomes in Lebanon limit what most people can pay.</p>",
   "Who wants it":"<p><b>It's mostly men, but some women too.</b> Men: 150,000 aged 21 to 40, 375,000 aged 41 to 60, and 300,000 aged 61 to 80, so 825,000. Women: 37,500 aged 41 to 60 and 150,000 aged 61 to 80, so 187,500. <b>About 1 million people are interested.</b></p>",
@@ -888,5 +888,150 @@ hair:{
   "Is it profitable?":"<p><b>Not necessarily: revenue isn't profit.</b> First, <b>R&D for a drug like this is very high</b>, so it may take a few years to break even. Second, <b>the price may be overestimated</b>: if results are similar to a transplant, speed and ease may not justify a 50 to 100% premium.</p>",
   "Year-one profit":"<p>Manufacturing is 44,000 times $100, $4.4 million, plus $40 million of marketing, so <b>year-one profit is about $286 million, recovering about 70% of the R&D</b>. <b>But each person buys only once</b>, so the Lebanese market shrinks after early adopters.</p>",
   "Recommendation":"<p><b>I recommend launching at around $7,500.</b> First-year revenue is about $330 million and profit about $286 million, so the R&D is recovered within about two years. <b>The main risks</b> are that the premium over a transplant may not hold, and that a one-time purchase means the market dries up. <b>Next steps:</b> test price sensitivity, plan other countries, and consider financing for middle-income buyers.</p>"
+ }}
+};
+
+/* What a good answer looks like. For each step: shape = the structure of a strong answer,
+   in order; phrases = exact wording worth reusing. book8 = the framework built with the
+   8 buckets from "Hacking the Case Interview" (shown next to the casebook's version). */
+window.CASE_GUIDE = {
+diapers:{
+ book8:{buckets:[["Market size (a formula, not buckets)",["Population → people per year of age","Users per age group × diapers per day","× 365 × price per diaper"]],["Market attractiveness",["Size and growth (birth rate, aging)","Retail price levels"]],["Competitive landscape",["Leading brands and their shares","Brand loyalty"]],["Financial considerations",["Share × margin → yearly profit","Payback on the $100M factory"]]],
+  note:"The book says to size markets with a formula, not buckets. Use buckets only for the factory decision that follows."},
+ steps:{
+  "Approach":{shape:["Say which method: top-down, by age","List the steps in order, with no numbers yet","Say who uses diapers (babies 0–3, elderly)","End by checking in"],phrases:["\"I'll size this top-down, by age.\"","\"No numbers yet, just the steps.\"","\"Does that approach sound reasonable?\""]},
+  "Population":{shape:["State each assumption and why","Do the division out loud","Round to an easy number and say so"],phrases:["\"I'll assume… because…\"","\"To keep the math simple, I'll round to…\""]},
+  "Diapers per day":{shape:["Announce: one group at a time","For each group: people × % using × per day","Flag the trap: 75–80 is five years of people","Add up and state the total with units"],phrases:["\"Let me go group by group.\"","\"That's five years of age, so…\"","\"Adding it up, that's about… a day.\""]},
+  "Market value":{shape:["Convert to a year","Convert price per pack to price per diaper","Multiply and state the answer with units"],phrases:["\"That's about X a year.\"","\"So the market is about $2.3 billion a year.\""]},
+  "Sanity check":{shape:["Give a verdict first (reasonable / too high / too low)","Name the assumption that matters most","Say which way it could be wrong, and why","Restate the number with a qualifier"],phrases:["\"It feels reasonable, and if anything conservative.\"","\"The assumption that matters most is…\""]},
+  "The factory decision":{shape:["Share × market = revenue","× margin = yearly profit","Investment ÷ profit = payback","Add the caveat (retailer margin, ramp-up)","Conclude against the goal"],phrases:["\"That's a payback of about…\"","\"One caveat:…\"","\"That's still attractive.\""]},
+  "What else to check":{shape:["Say how many areas","Give 2–3 checks per area","End with a lower-risk alternative"],phrases:["\"I'd group what I'd check into three areas.\"","\"A lower-risk option could be…\""]},
+  "Recommendation":{shape:["Answer first, in one sentence","2–3 reasons with numbers","The key risk","Next steps"],phrases:["\"I recommend…, subject to…\"","\"The key risk is…\"","\"As next steps, I'd…\""]}
+ }},
+hotdog:{
+ book8:{buckets:[["Financial considerations",["Revenue: price × meals, other streams","Costs: food (3× pricing), rent, labor, utilities, waste","Profit now vs. last year"]],["Customer segmentation & needs",["Who buys (students, office workers)","What they value: price, speed, choice"]],["Competitive landscape",["Frank's: what changed there?","Indirect: Roadster Diner, restaurants"]]],
+  note:"Same core as the casebook (revenue − costs), but the customer and competitor buckets point you to Frank's student deal much earlier."},
+ steps:{
+  "Framework":{shape:["Name the case type: profitability","Revenue bucket with sub-bullets","Costs bucket: fixed vs. variable","External check: is Frank's affected?","Say what you'd look at first, then check in"],phrases:["\"This is a profitability problem, so I'll start from profit equals revenue minus costs.\"","\"My hypothesis is that the problem is specific to our stand.\"","\"Does that sound good?\""]},
+  "Revenue streams":{shape:["Today's stream first","2–4 other possible streams","Say which you'll focus on"],phrases:["\"Today it's the standard meal.\"","\"For now I'll focus on…, and keep the others for growth.\""]},
+  "Monthly revenue":{shape:["State your estimate and why","Per day, then per month","State the result with units"],phrases:["\"I'd estimate about… because…\"","\"That's $90 a day, so $2,700 a month.\""]},
+  "Cost structure":{shape:["Brainstorm costs before seeing the list","Decode '3× pricing' out loud","Sort into fixed vs. variable"],phrases:["\"Before looking at the list, I'd expect…\"","\"3× pricing means food costs a third of the price, so $2 a meal.\""]},
+  "This month's profit":{shape:["List each cost line","Total costs","Revenue − costs = profit, with the sign","Point out the biggest avoidable line"],phrases:["\"So the stand loses $100 a month.\"","\"Interestingly, the $200 of expired food is bigger than the loss itself.\""]},
+  "Last year vs. this year":{shape:["Compute last year's profit","State the change","Break the change down line by line","Name the main driver and link waste to volume"],phrases:["\"So profit fell $800.\"","\"The main problem is volume.\"","\"The two are connected:…\""]},
+  "Why customers left":{shape:["Structure causes: internal vs. external","Read the data: biggest reason first","Group the reasons","So what"],phrases:["\"I'd split the causes into internal and external.\"","\"So 70% of the reasons are about value and service.\"","\"So what: the competitor changed, not the market.\""]},
+  "Increasing profitability":{shape:["Two buckets: increase revenues / decrease costs","Revenue: price (elasticity), volume, new streams","Costs: location, COGS, inventory","Highlight the single best idea"],phrases:["\"I'd split this into increasing revenues and decreasing costs.\"","\"Most importantly, inventory.\""]},
+  "Should they cut the price?":{shape:["New margin per meal","Costs to cover","Breakeven volume per month, then per day","Compare with today and conclude"],phrases:["\"Breakeven is about… meals a day.\"","\"That means winning back almost every lost customer just to break even.\""]},
+  "Recommendation":{shape:["One-sentence diagnosis with numbers","2–3 actions, ranked","Why not the obvious option (a price cut)","Next step"],phrases:["\"The stand loses about $100 a month because…\"","\"I recommend three actions.\""]}
+ }},
+concert:{
+ book8:{buckets:[["Financial considerations",["Revenue: tickets by tier, sponsors, extras","Costs: fixed (DJ, venue, insurance, ops) vs. per ticket","Profit vs. the $10k bar"]],["Customer segmentation & needs",["Who comes: VIP vs. regular","Demand: will it sell out?","Cultural preferences in Riyadh"]],["Risks & mitigations",["License and local regulations","Ticket sales shortfall","DJ cancellation"]]],
+  note:"The casebook only has a profit calculation then an 'important aspects' list. These three buckets cover both from the start."},
+ steps:{
+  "Framework":{shape:["Profitability bucket","Demand bucket","Feasibility / risks bucket","Tie back to the $10k goal and check in"],phrases:["\"I'd look at three areas.\"","\"I'd then compare expected profit with their $10,000 threshold.\""]},
+  "Revenue streams":{shape:["Core streams first","Extras as upside","Say what you'll start with"],phrases:["\"The core streams are…; on top of that…\""]},
+  "Full-house revenue":{shape:["Tier by tier","Sponsors","Total"],phrases:["\"Total revenue at a full house is $38,000.\""]},
+  "Costs and profit":{shape:["Split fixed vs. variable","Total each","Profit, then compare with the goal"],phrases:["\"I'll split costs into fixed and variable.\"","\"So profit is $15,800, above the $10,000 bar if it sells out.\""]},
+  "Realistic sales":{shape:["Apply sell-through to each tier","Recompute variable costs too","New profit vs. the goal","So what"],phrases:["\"Using past sell-through…\"","\"So the full-house case is misleading.\""]},
+  "Important aspects":{shape:["Say how many groups","Barriers → culture → selling out → extra revenue","1–2 concrete examples each"],phrases:["\"I'd group them into four areas.\""]},
+  "Closing the gap":{shape:["Size the gap","Pick the easiest lever and size it","List backups"],phrases:["\"The gap is small, under $1,000.\"","\"That alone closes it.\""]},
+  "Recommendation":{shape:["Answer first, with the condition","Full-house vs. realistic numbers","How to close the gap","Next steps"],phrases:["\"I recommend going ahead, but only once…\""]}
+ }},
+banker:{
+ book8:{buckets:[["Market attractiveness",["Market size and growth","Profitability of banking","Niches growing fastest"]],["Competitive landscape",["Concentration: top players' shares","Barriers: license, Saudization, local partner"]],["Company capabilities",["No banking experience or credibility","$25M budget"]],["Financial considerations & risks",["Build vs. buy: payback","Forecast vs. proven profits: risk appetite"]]],
+  note:"The casebook framework stops at competitors, barriers and share. The book's buckets add the client's capabilities and the financials, which is exactly what the case turns on."},
+ steps:{
+  "Framework":{shape:["Say how many areas","Competitors, barriers, market share (2–3 sub-bullets each)","Add the client's fit and financials if you can","Check in"],phrases:["\"I'd look at three areas.\"","\"Does that sound good?\""]},
+  "The market":{shape:["Two takeaways: attractive vs. hard","Back each with a number","So what for a newcomer"],phrases:["\"Two takeaways.\"","\"This points toward buying a foothold rather than building.\""]},
+  "Ways to enter":{shape:["Name the options","Say how you'll compare them"],phrases:["\"There are two main ways in: build or buy.\""]},
+  "Profitability of each":{shape:["Profit of option 1, then payback","Payback of option 2","Compare on numbers only"],phrases:["\"On payback alone, building looks faster.\""]},
+  "Risk of each":{shape:["Push back on the obvious answer","Risks of building","Why buying is safer","Tie to risk appetite"],phrases:["\"Not necessarily.\"","\"The $10 million is a forecast, not money that's actually there.\"","\"So it depends on the client's risk appetite.\""]},
+  "Launch delay":{shape:["Add the delay to the payback","Re-compare","Restate the conclusion"],phrases:["\"So buying is now both faster and lower risk.\""]},
+  "The catch":{shape:["Name the concern","Link it to the client's objective","Propose a condition"],phrases:["\"Yes, one significant concern.\"","\"I'd make the deal conditional on…\""]},
+  "Recommendation":{shape:["Answer first, tied to risk appetite","Three reasons","The condition","Next steps"],phrases:["\"Given the client prefers to avoid big risks, I recommend…\""]}
+ }},
+tv:{
+ book8:{buckets:[["Financial considerations",["Ad revenue: peak vs. non-peak, slots sold","Costs: $6M a year, mainly labor","Payback vs. the 5-year goal"]],["Synergies",["Family's restaurants and buses can advertise","Cross-promotion of their businesses"]],["Market attractiveness & competition",["Ad market trend","Competing channels, antitrust"]],["Company capabilities",["Media expertise, management","Conflicts of interest"]]],
+  note:"The casebook's Client / Market / Profitability misses Synergies. With the book's buckets, the family's own advertising shows up from the start, not at the end."},
+ steps:{
+  "Framework":{shape:["Client, market, profitability (2–3 sub-bullets each)","Say which matters most: payback","Check in"],phrases:["\"Since payback is the deal-breaker, I'd focus on profitability.\""]},
+  "Revenue streams":{shape:["List the streams","Say which this channel uses"],phrases:["\"A TV channel can earn from…\""]},
+  "Maximum ad revenue":{shape:["Bottom-up: peak and non-peak separately","Price × minutes × hours × days","Total"],phrases:["\"I'll go bottom-up, peak and non-peak separately.\""]},
+  "Payback":{shape:["Profit = revenue − costs","Payback = investment ÷ profit","Compare with the goal"],phrases:["\"That just misses their goal of less than five.\""]},
+  "Critique the result":{shape:["Challenge your own number","Say why it's a ceiling","Recompute with the real figure","Conclude against the goal"],phrases:["\"Not quite. The $9 million assumes every slot is sold, so it's a ceiling.\""]},
+  "Speeding up payback":{shape:["Two buckets: revenues / costs","3–4 revenue ideas, incl. the family's own ads","2–3 cost ideas"],phrases:["\"I'd split it into increasing revenues and decreasing costs.\""]},
+  "Synergies":{shape:["What can move, and the cap (unsold slots)","Saving vs. new money","New payback vs. the goal"],phrases:["\"It's a saving, not new money.\""]},
+  "The right price":{shape:["Profit × years allowed = max price","How to use synergies in negotiation"],phrases:["\"I'd keep the synergies as negotiating room.\""]},
+  "Recommendation":{shape:["Answer first: not at this price","Reasons with numbers","Counter-offer and profit levers","Next steps"],phrases:["\"I recommend not buying at $15 million.\"","\"I'd counter-offer around $10 million.\""]}
+ }},
+plane:{
+ book8:{buckets:[["Profit as a function of price (a formula)",["Demand: seats vs. price","Revenue = price × seats","Costs = fixed + per seat"]],["Financial considerations",["Ticket and ancillary revenue streams","Fixed vs. variable costs"]],["Customer segmentation & needs",["Price sensitivity by traveler type","Business vs. leisure"]],["Competitive landscape",["Competitor fares and frequency"]]],
+  note:"Pricing math needs a formula, not buckets. The buckets help afterwards, for the sanity check against competitors and the empty seats."},
+ steps:{
+  "Approach":{shape:["Name the case type: pricing","Profit as a function of price","Say you need a demand relationship","Plan to sanity-check"],phrases:["\"I'll express profit as a function of the ticket price.\""]},
+  "Revenue streams":{shape:["Ticket first","Ancillaries","Say what you'll focus on"],phrases:["\"Besides the ticket itself, an airline earns from…\""]},
+  "Costs":{shape:["List 6–7 costs","Group them if you can (flying, people, overhead)"],phrases:["\"The main costs are…\""]},
+  "Fixed vs. variable":{shape:["Which are fixed per flight","Which grow per passenger","Write the cost formula"],phrases:["\"So costs equal $10,000 plus $500 times seats sold.\""]},
+  "Demand curve":{shape:["Assume a straight line","Slope from the two points","Intercept","Check with the other point"],phrases:["\"So seats equal minus 0.1 times price, plus 300.\""]},
+  "Profit formula":{shape:["Revenue in terms of P","Costs in terms of P","Profit = revenue − costs"],phrases:["\"So profit is minus 0.1P squared plus 350P minus 160,000.\""]},
+  "Best price":{shape:["Set the derivative to zero (or test prices)","Solve for P","Seats and profit at that price"],phrases:["\"Profit peaks where its derivative is zero.\""]},
+  "Sanity check":{shape:["Verdict","Compare with competitors","Load factor","Conclude: right but fragile"],phrases:["\"The math is right, but the result is fragile.\""]},
+  "The empty seats":{shape:["Size the offer","Name the risk (cannibalization)","How to manage it"],phrases:["\"The risk is cannibalization.\""]},
+  "Recommendation":{shape:["Answer first: the price plus discount fares","Numbers","Risk","Next steps"],phrases:["\"I recommend a $1,750 headline fare, plus restricted discount fares.\""]}
+ }},
+energy:{
+ book8:{buckets:[["Consumption by sector (create your own)",["Residential, commercial, industrial, transport","Biggest uses (home AC)"]],["Ways to reduce, by lever (create your own)",["Price","Efficiency and technology","Regulation and behavior"]],["Financial considerations",["Cost-benefit, incl. CO₂ and cleaner air","Subsidy savings"]],["Risks & mitigations",["Political acceptability of price rises","Feasibility: engineering, expertise, technology"]]],
+  note:"Close to the casebook's four buckets. The book's 'Risks & mitigations' names the political problem with raising prices explicitly."},
+ steps:{
+  "Framework":{shape:["Four buckets in order: sectors → reduction → feasibility → profitability","1–2 sub-bullets each","Check in"],phrases:["\"I'd structure it in four buckets.\""]},
+  "Where the energy goes":{shape:["Biggest sector","Biggest use inside it","Multiply to national share","Where to start"],phrases:["\"So home AC alone is about 28% of national consumption.\""]},
+  "Homes, offices and venues":{shape:["Say your lever types","2–3 ideas per type"],phrases:["\"I'd use three types of levers: price, efficiency, smarter use.\""]},
+  "Size one lever":{shape:["Chain the percentages","Result vs. the target","So what"],phrases:["\"So what: one ambitious program delivers only a quarter of the target.\""]},
+  "Industrial sector":{shape:["Price and regulation","Technology","Operations and incentives"],phrases:["\"For industry:…\""]},
+  "Transportation sector":{shape:["Price signals","Alternatives to driving","Cleaner vehicles"],phrases:["\"For transport:…\""]},
+  "The politics":{shape:["Principle: gradual and targeted","Tiered pricing","Protect low-income households","Recycle the savings"],phrases:["\"I'd make price changes gradual and targeted.\""]},
+  "Recommendation":{shape:["Answer first: a package","Priorities, ranked by impact","Next steps"],phrases:["\"Minister, I recommend a package, not a single measure.\""]}
+ }},
+bank:{
+ book8:{buckets:[["Financial considerations",["Revenue by category (in $, not %)","Volume vs. revenue per customer","Prices and fees"]],["Customer segmentation & needs",["Which customers are leaving, and why","Retention vs. acquisition"]],["Competitive landscape",["New digital banks","Competitors' offers and fees"]],["Market attractiveness",["Economy: disposable income, interest rates","Regulation"]]],
+  note:"The casebook's External / Internal covers the same ground. The book's Customer bucket points straight at churn, which turns out to be the root cause."},
+ steps:{
+  "Framework":{shape:["External vs. internal","2–3 sub-bullets each","Say what the data already hints","Check in"],phrases:["\"I'd take an external-internal approach.\""]},
+  "Which category?":{shape:["Name the category and both reasons","Explain why the other two are undetermined","Ask for the dollar totals"],phrases:["\"Category 1, for two reasons:…\"","\"For categories 2 and 3, it's undetermined.\""]},
+  "In dollars":{shape:["Convert each category","Change for each","Conclude"],phrases:["\"So Category 1 explains the entire decline.\""]},
+  "Customers or price?":{shape:["Volume change","Revenue per customer change","Diagnosis"],phrases:["\"So this is a churn problem, not a pricing problem.\""]},
+  "Why are they leaving?":{shape:["Summarize where we are in one sentence","Read the survey: biggest reason first","Root cause"],phrases:["\"To summarize where we are:…\""]},
+  "Existing or new customers?":{shape:["Name both options","Pick one, and give the reason"],phrases:["\"Existing customers are easier: banks have high retention.\""]},
+  "Cross-selling":{shape:["Name the main lever","Both directions","Other ideas"],phrases:["\"The main lever is cross-selling.\""]},
+  "Size the cross-sell":{shape:["Find the target customers","Fee 1","Fee 2","Total"],phrases:["\"Total: $5.25 million a year.\""]},
+  "Total upside":{shape:["Add both directions","Compare with the gap","So what"],phrases:["\"That's only about a quarter of what we lost.\""]},
+  "Recommendation":{shape:["Answer first: go ahead with cross-selling","Why it's not enough alone","Other actions","Next steps"],phrases:["\"I recommend going ahead with the cross-selling strategy.\""]}
+ }},
+crypto:{
+ book8:{buckets:[["Market attractiveness",["Crypto users in Lebanon","Why Lebanese use crypto (bank distrust)"]],["Customer segmentation & needs",["Age and income segments","Tech literacy, risk appetite"]],["Competitive landscape",["Bitcoin's 60%","Switching costs"]],["Financial considerations & risks",["Fees × transactions, 10% margin, payback","Regulation, volatility"]]],
+  note:"The casebook uses Client / Market / Profitability. The book's Customer segmentation bucket is what the case actually uses (age, then income), and Risks covers the unclear regulation."},
+ steps:{
+  "Framework":{shape:["Client, market, profitability","2–3 sub-bullets each","Check in"],phrases:["\"I'd look at three areas.\""]},
+  "Key factors":{shape:["List the factors","Say which you'll segment by and why"],phrases:["\"I'd segment by age first, then by income.\""]},
+  "How many users?":{shape:["Per age group","Total crypto users","Apply the untapped share","Call it a ceiling"],phrases:["\"That's our maximum available market.\""]},
+  "Transactions":{shape:["Per income group","Total per week"],phrases:["\"About 624,000 transactions a week.\""]},
+  "Profit":{shape:["Fixed-charge revenue","Weighted-average commission","Total revenue × margin"],phrases:["\"The average commission is…, so…\""]},
+  "Why only 10%?":{shape:["Reframe: why are costs high?","Setup costs","Running costs","Acquisition costs"],phrases:["\"The real question is why costs are so high.\""]},
+  "Payback":{shape:["Annualize","Investment ÷ profit","Compare with the goal"],phrases:["\"Well within their three-year goal, if we win those users.\""]},
+  "Stress test":{shape:["Profit per user","Users needed","Compare with the market"],phrases:["\"That's the key risk.\""]},
+  "Recommendation":{shape:["Answer first: launch, carefully","Upside with numbers","Main risks","Next steps"],phrases:["\"It looks like a profitable idea, so I'd recommend launching, carefully.\""]}
+ }},
+hair:{
+ book8:{buckets:[["Customer segmentation & needs",["Who has hair loss: men vs. women, by age","Who can afford it: income","Adoption speed"]],["Competitive landscape",["Transplants ($5,000) and treatments","No direct substitute"]],["Financial considerations",["Price: value vs. competitor based","R&D, manufacturing, marketing costs"]]],
+  note:"The casebook's Price / Volume is a revenue formula. With the book's buckets, the customer segments (gender, income, early adopters) become the backbone, and they drive the whole case."},
+ steps:{
+  "Framework":{shape:["Revenue = price × volume","Price sub-bullets incl. 3 pricing strategies","Volume sub-bullets","Check in"],phrases:["\"Revenue is price times volume, so I'd structure it in those two buckets.\""]},
+  "Pricing strategy":{shape:["Choose the strategy","Value argument","Competitor anchor","Why not cost-based"],phrases:["\"I'd combine value-based and competitor-based pricing.\""]},
+  "Price":{shape:["Range with the multiple","Where in the range and why"],phrases:["\"I'd price it at 1.5 to 2 times a transplant.\""]},
+  "Who wants it":{shape:["Mostly men, some women","Men by age","Women by age","Total, rounded"],phrases:["\"It's mostly men, but some women too.\""]},
+  "Who can afford it":{shape:["Segment by income","Each segment","Total"],phrases:["\"I'd segment by income.\""]},
+  "Year-one revenue":{shape:["Adoption isn't instant","Early adopter share","Buyers × price"],phrases:["\"Only early adopters buy a new product right away.\""]},
+  "Is it profitable?":{shape:["Revenue isn't profit","Reason 1: R&D","Reason 2: the price may be overestimated"],phrases:["\"Not necessarily: revenue isn't profit.\""]},
+  "Year-one profit":{shape:["Costs line by line","Profit","Share of R&D recovered","The catch: one-time purchase"],phrases:["\"But each person buys only once.\""]},
+  "Recommendation":{shape:["Answer first: launch at the price","Revenue and profit","Risks","Next steps"],phrases:["\"I recommend launching at around $7,500.\""]}
  }}
 };

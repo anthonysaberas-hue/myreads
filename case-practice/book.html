@@ -134,6 +134,13 @@ th{font-weight:600}
 .script p{font-family:var(--display);font-size:1.06rem;line-height:1.55}
 .script b{background:color-mix(in srgb,var(--accent) 14%,transparent);padding:0 2px;border-radius:3px}
 .scriptbtn{justify-self:start}
+.shape{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px 14px;display:grid;gap:6px}
+.shape .lbl{color:var(--muted)}
+.shape ol{margin:0;padding-left:20px}
+.phr{font-size:.9rem}
+.b8grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.b8{background:color-mix(in srgb,var(--accent) 7%,var(--paper));border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-family:var(--body);font-size:.9rem}
+.b8 ul{margin:4px 0 0;padding-left:18px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chips button{border-radius:999px;font-size:.88rem}
 .chips button.asked{background:var(--iv);color:var(--muted)}
@@ -219,6 +226,24 @@ const SCRIPTS=window.CASE_SCRIPTS||{};
 const scriptOf=(c,name)=>((SCRIPTS[c.id]||{}).steps||{})[name];
 function scriptHTML(r,key,html){if(!html)return "";return r.seen[key]?`<div class="script"><span class="lbl">Sample answer, said out loud <button class="small ghost hidebtn" data-hide="${key}">Hide</button></span>${html}</div>`:`<button class="small scriptbtn" data-reveal="${key}">Reveal sample answer</button>`}
 const addNote=(txt)=>txt?`<p class="addnote">Beyond ${SRC}: ${txt}</p>`:"";
+
+/* ---------- what a good answer looks like ---------- */
+const CGUIDE=window.CASE_GUIDE||{};
+const guideOf=(c,name)=>((CGUIDE[c.id]||{}).steps||{})[name];
+function shapeHTML(c,name){const g=guideOf(c,name);if(!g)return "";
+  return `<div class="shape"><span class="lbl">How to structure it</span><ol>${g.shape.map(x=>`<li>${x}</li>`).join("")}</ol>${g.phrases&&g.phrases.length?`<p class="phr"><b>Phrases to reuse:</b> ${g.phrases.join(" · ")}</p>`:""}</div>`}
+function book8Body(c){const b=(CGUIDE[c.id]||{}).book8;if(!b)return "";
+  return `<div class="b8grid">${b.buckets.map(([n,subs])=>`<div class="b8"><b>${n}</b><ul>${subs.map(s=>`<li>${s}</li>`).join("")}</ul></div>`).join("")}</div><p class="addnote" style="margin-top:0">${b.note}</p>`}
+function revealBox(r,key,btn,lbl,html){if(!html)return "";return r.seen[key]?`<div class="script"><span class="lbl">${lbl} <button class="small ghost hidebtn" data-hide="${key}">Hide</button></span>${html}</div>`:`<button class="small scriptbtn" data-reveal="${key}">${btn}</button>`}
+function renderScript(){
+  const c=CASES.find(x=>x.id===view.id), S=(SCRIPTS[c.id]||{});
+  let h=`<div class="turn"><div class="iv"><span class="who">Interviewer</span><div class="say">${c.prompt.map(l=>`<p>${l}</p>`).join("")}</div></div>${S.open?`<div class="script"><span class="lbl">Candidate</span>${S.open}</div>`:""}</div>`;
+  c.steps.forEach(st=>{const sc=scriptOf(c,st.name);
+    h+=`<div class="turn"><div class="iv"><span class="who">Interviewer · ${esc(st.name)}</span><div class="say">${st.say.map(l=>`<p>${l}</p>`).join("")}</div></div>${st.give?`<div class="data"><span class="lbl">Interviewer hands over</span>${st.give.html}</div>`:""}${sc?`<div class="script"><span class="lbl">Candidate</span>${sc}</div>`:`<div class="answer"><span class="lbl">Model answer</span>${st.key||""}</div>`}</div>`});
+  app.innerHTML=topBar()+`<div class="bar"><button class="small ghost" data-backcase>← Back to the case</button><span class="status">Full sample interview</span></div>
+  <header class="casehead"><div class="meta"><span class="chip">${c.type}</span><span class="chip d-${c.diff}">${c.diff}</span></div><h2>${c.title}: sample interview</h2><p class="tip">One strong way to run the whole case, start to finish. Read it after you've tried the case yourself.</p></header>
+  <div class="turns">${h}</div><div class="next" style="margin-top:20px"><button class="primary" data-backcase>Back to the case</button></div>`;
+}
 /* ---------- app state ---------- */
 let view={name:"home"}, filter="All", ivMode=false, tick=null, fitTick=null;
 let theme="light";try{theme=localStorage.getItem(KEY+"-theme")||"light"}catch(e){}
@@ -282,7 +307,7 @@ function stepHTML(c,s,i,isCurrent){
    </div>
    ${hints&&!seenAns?`<div class="iv"><span class="who">Interviewer · hint ${ivMode?"":`<button class="small ghost hidebtn" data-hide="h${k}">Hide</button>`}</span><div class="say">${st.stuck.slice(0,hints).map(h=>`<p>${h}</p>`).join("")}</div></div>`:""}
    ${st.give&&seenData?`<div class="data"><span class="lbl">Interviewer hands you ${ivMode?"":`<button class="small ghost hidebtn" data-hide="d${k}">Hide</button>`}</span>${st.give.html}</div>`:""}
-   ${seenAns?`<div class="answer"><span class="lbl">Model answer ${ivMode?"":`<button class="small ghost hidebtn" data-hide="a${k}">Hide</button>`}</span>${st.key||""}${st.listen?`<p><b>A strong answer covers:</b></p><ul>${st.listen.map(l=>`<li>${l}</li>`).join("")}</ul>`:""}${scriptHTML(r,"s"+k,scriptOf(c,st.name))}</div>`:""}
+   ${seenAns?`<div class="answer"><span class="lbl">Model answer ${ivMode?"":`<button class="small ghost hidebtn" data-hide="a${k}">Hide</button>`}</span>${st.key||""}${st.listen?`<p><b>A strong answer covers:</b></p><ul>${st.listen.map(l=>`<li>${l}</li>`).join("")}</ul>`:""}${shapeHTML(c,st.name)}${isTreeStep(c,i)?revealBox(r,"b"+k,"Show the 8-bucket version","The book's 8-bucket version",book8Body(c)):""}${scriptHTML(r,"s"+k,scriptOf(c,st.name))}</div>`:""}
   </div>`;
 }
 
@@ -300,12 +325,13 @@ function renderCase(){
   const finished=shown>=total;
   const nextBtn=!finished?`<div class="next"><button class="primary" data-next>${shown===0?"I'm ready, start the case":"Next question"}</button></div>`:"";
   const scoreBox=finished?`<div class="score"><h3>Debrief: score yourself</h3><div class="scoregrid">${SCORE_DIMS.map(([d,h])=>`<div class="scoreline"><b>${d}</b><div class="dots" role="group" aria-label="${d} score">${[1,2,3,4,5].map(n=>`<button data-score="${d}" data-n="${n}" aria-pressed="${s.scores[d]===n}">${n}</button>`).join("")}</div><small>${h}</small></div>`).join("")}</div>
+   <div class="row"><button class="small" data-fullscript>Read the full sample interview</button></div>
    <div class="row"><button class="primary" data-done>${s.done?"Saved":"Finish case"}</button><button class="ghost" data-reset>Restart this case</button><span class="status">Time on case: ${fmtT(s.secs)}</span></div></div>`:"";
   app.innerHTML=topBar()+`
   <div class="bar"><button class="small ghost" data-home>← All cases</button>
    <div class="progress" aria-label="Progress">${c.steps.map((_,i)=>`<i class="${i<shown?"on":""}"></i>`).join("")}</div>
    <div class="row"><span class="timer ${s.secs>1800?"over":""}" id="timer">${fmtT(s.secs)}</span><button class="small" data-pause>${view.paused?"Resume":"Pause"}</button></div></div>
-  <header class="casehead"><div class="meta"><span class="chip">${c.type}</span><span class="chip d-${c.diff}">${c.diff}</span></div><h2>${c.title}</h2><p class="tip">About ${c.mins} minutes. Talk out loud as if the interviewer is listening.</p></header>
+  <header class="casehead"><div class="meta"><span class="chip">${c.type}</span><span class="chip d-${c.diff}">${c.diff}</span></div><h2>${c.title}</h2><div class="row"><button class="small" data-fullscript>Read the full sample interview</button></div><p class="tip">About ${c.mins} minutes. Talk out loud as if the interviewer is listening.</p></header>
   <div class="turns">${turns}${nextBtn}${scoreBox}</div>
   <div class="notes"><label class="youlbl" for="notes-${c.id}">Scratch notes</label><textarea id="notes-${c.id}" data-notes placeholder="Numbers, assumptions, things to say in the recommendation…">${esc(s.notes||"")}</textarea></div>`;
   clearInterval(tick);
@@ -325,7 +351,7 @@ function renderFit(){
 }
 
 function render(){
-  if(view.name==="case")renderCase();else if(view.name==="fit")renderFit();else renderHome();
+  if(view.name==="case")renderCase();else if(view.name==="script")renderScript();else if(view.name==="fit")renderFit();else renderHome();
 }
 
 
@@ -364,6 +390,8 @@ app.addEventListener("click",e=>{
   if("filter"in d){filter=d.filter;return render()}
   if("home"in d){save();return go({name:"home"})}
   if("fit"in d){let n;do{n=Math.floor(Math.random()*FIT.length)}while(view.name==="fit"&&n===view.q&&FIT.length>1);return go({name:"fit",q:n})}
+  if("fullscript"in d)return go({name:"script",id:view.id});
+  if("backcase"in d)return go({name:"case",id:view.id});
   if(view.name!=="case")return;
   const c=CASES.find(x=>x.id===view.id), s=cs(c.id);
   const r=rv(c.id);
