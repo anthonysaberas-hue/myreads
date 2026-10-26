@@ -2055,7 +2055,8 @@ childplacement:{
 
 /* ===== Library metadata: catalog filters + "Best order" for when time is short =====
    meta: the prep platform's Type, Difficulty, Function, Sector, Stretch area, Video, rating, downloads.
-   rank: recommended completion order. core: the shortest path that covers every case type once.
+   rank: recommended completion order, most common case types first. tier: the band it sits in.
+   core: the shortest path that covers every case type once.
    teaches: what is new in this case compared with the ones before it. */
 (function(){
   const iv="Interviewer-led (classic)";
@@ -2069,37 +2070,38 @@ childplacement:{
     aeye:{kind:iv, functions:["Pricing"], sectors:["Technology","Manufacturing"], stretch:["Numeracy"], video:false, rating:4.1, downloads:15089}
   };
   const STATS={quantumbank:[4.5,5302], nurvaccine:[4.6,8049], diagnosisai:[4.6,8568], lowcarbon:[4.6,8246], deptstore:[4.6,5037], inflightwifi:[4.6,7533], labdiamonds:[4.7,9026], childplacement:[4.1,8771]};
+  const T1="Tier 1 · Classic types", T2="Tier 2 · Variations on the classics", T3="Tier 3 · Less frequent", T4="Optional · Repeats tools you've seen";
   const ORDER=[
-    ["qtco",true,"The classic profitability tree, and reading two exhibits for the one insight that matters"],
-    ["purefresh",true,"Revenue tree (stores × visits × spend), a price-vs-volume test, and a first top-down market sizing"],
-    ["labdiamonds",true,"Cannibalization math, and reading a survey to spot a brand risk vs. a new segment"],
-    ["taxiempire",true,"Building a mini P&L (depreciation, tax), return on equity, and how debt (leverage) changes it"],
-    ["cbafashion",true,"Operations: map a process step by step, plus a probability twist (orders wait for their slowest item)"],
-    ["aeye",true,"Value-based pricing: price from the customer's savings, then protect share"],
-    ["flashfash",true,"M&A: test the target's plan, size synergies, and weigh buying against building"],
-    ["cwf",true,"A bespoke framework (births − deaths ± migration) for a non-profit problem"],
-    ["newlight",true,"Product launch: bottom-up sizing with adjustments, then picking a go-to-market channel"],
-    ["viraloutbreak",true,"Public sector: what a chart can and can't prove, and expected-value math"],
-    ["patati",true,"Turnaround: diagnose a decline, find a competitor's cost edge, compare invest vs. do-nothing scenarios"],
-    ["quantumbank",true,"AI: prioritize use cases, then allocate a budget when some projects are all-or-nothing"],
-    ["spaceexplorer",true,"Market entry the hard way: set a price, find breakeven, size a niche market step by step"],
-    ["redwhisk",true,"Candidate-led format: you drive the case. Investment logic, P&L trends, CAC vs. lifetime value"],
-    ["childplacement",true,"Cost reduction with a bespoke structure, R² scatter plots, and a mix-shift calculation"],
-    ["sgtaxis",true,"Pure estimation: demand ÷ supply, built from scratch with no data"],
-    ["diagnosisai",false,"Profit by customer segment, and why flat-fee 'unlimited' pricing breaks with heavy users"],
-    ["mcburger",false,"Hard growth case: a dense income chart and algebra on a customer-mix shift"],
-    ["deptstore",false,"Atypical opening (segmentation brainstorm) and comparing two campaigns by profit, not volume"],
-    ["inflightwifi",false,"Sizing a one-off retrofit pool vs. a recurring flow, and S-curve adoption"],
-    ["menastream",false,"Where-to-play from a 3-dimension bubble chart, then a unit business case"],
-    ["nurvaccine",false,"Supply vs. demand framework, and testing an incentive against a target and a budget"],
-    ["lowcarbon",false,"Sustainability: emissions lifecycle and cutting the costly, low-impact option to meet a cap"],
-    ["fruitnation",false,"Value-to-customer pricing again, plus China entry risks (repeats A-EYE's core tool)"],
-    ["roko",false,"Easy profitability warm-up: revenue from two exhibits (repeats QT Co.'s tree)"],
-    ["cleanall",false,"Easy growth case: prioritizing services and in-house vs. outsourced cost (repeats earlier tools)"]
+    ["qtco",true,T1,"The classic profitability tree, and reading two exhibits for the one insight that matters"],
+    ["labdiamonds",true,T1,"Market entry for a new line: cannibalization math, and reading a survey for brand risk vs. a new segment"],
+    ["purefresh",true,T1,"Revenue tree (stores × visits × spend), a price-vs-volume test, and a first top-down market sizing"],
+    ["aeye",true,T1,"Value-based pricing: price from the customer's savings, then protect share"],
+    ["flashfash",true,T1,"M&A: test the target's plan, size synergies, and weigh buying against building"],
+    ["diagnosisai",true,T1,"Profit by customer segment for an AI company, and why flat-fee 'unlimited' pricing breaks with heavy users"],
+    ["quantumbank",true,T1,"AI: prioritize use cases, then allocate a budget when some projects are all-or-nothing"],
+    ["spaceexplorer",true,T1,"Market entry the hard way: set a price, find breakeven, size a niche market step by step"],
+    ["taxiempire",true,T2,"Investment: a mini P&L (depreciation, tax), return on equity, and how debt (leverage) changes it"],
+    ["patati",true,T2,"Turnaround: diagnose a decline, find a competitor's cost edge, compare invest vs. do-nothing scenarios"],
+    ["cbafashion",true,T2,"Operations: map a process step by step, plus a probability twist (orders wait for their slowest item)"],
+    ["newlight",true,T2,"Product launch: bottom-up sizing with adjustments, then picking a go-to-market channel"],
+    ["redwhisk",true,T2,"Candidate-led format: you drive the case. Investment logic, P&L trends, CAC vs. lifetime value"],
+    ["childplacement",true,T2,"Cost reduction with a bespoke structure, R² scatter plots, and a mix-shift calculation"],
+    ["cwf",true,T3,"A bespoke framework (births − deaths ± migration) for a non-profit problem"],
+    ["viraloutbreak",true,T3,"Public sector: what a chart can and can't prove, and expected-value math"],
+    ["sgtaxis",true,T3,"Pure estimation: demand ÷ supply, built from scratch with no data"],
+    ["mcburger",false,T4,"Hard growth case: a dense income chart and algebra on a customer-mix shift"],
+    ["deptstore",false,T4,"Atypical opening (segmentation brainstorm) and comparing two campaigns by profit, not volume"],
+    ["inflightwifi",false,T4,"Sizing a one-off retrofit pool vs. a recurring flow, and S-curve adoption"],
+    ["menastream",false,T4,"AI where-to-play from a 3-dimension bubble chart, then a unit business case"],
+    ["nurvaccine",false,T4,"Supply vs. demand framework, and testing an incentive against a target and a budget"],
+    ["lowcarbon",false,T4,"Sustainability: emissions lifecycle and cutting the costly, low-impact option to meet a cap"],
+    ["fruitnation",false,T4,"Value-to-customer pricing for a market entry (repeats A-EYE's core tool)"],
+    ["roko",false,T4,"Easy profitability warm-up: revenue from two exhibits (repeats QT Co.'s tree)"],
+    ["cleanall",false,T4,"Easy growth case: prioritizing services and in-house vs. outsourced cost (repeats earlier tools)"]
   ];
   const by={}; window.CASES.forEach(c=>by[c.id]=c);
   for(const id in META) by[id].meta=META[id];
   for(const id in STATS){ by[id].meta.rating=STATS[id][0]; by[id].meta.downloads=STATS[id][1]; }
-  ORDER.forEach(([id,core,teaches],i)=>Object.assign(by[id],{rank:i+1,core,teaches}));
+  ORDER.forEach(([id,core,tier,teaches],i)=>Object.assign(by[id],{rank:i+1,core,tier,teaches}));
   window.CASES.sort((a,b)=>a.rank-b.rank);
 })();

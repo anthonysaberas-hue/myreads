@@ -327,7 +327,7 @@ function caseHTML(c,ci){
   const s=st[c.id]||{};
   let h=`<div class="eyebrow">Case ${ci+1} of ${CASES.length}</div><h2>${c.title}</h2>
   <div class="meta"><span class="chip">${c.type}</span><span class="chip">${c.diff}</span><span class="chip">~${c.mins} min</span>${c.core?'<span class="chip">Core path</span>':""}</div>
-  <p class="muted">#${c.rank} in best order · Teaches: ${c.teaches}</p>
+  <p class="muted">#${c.rank} · ${c.tier} · Teaches: ${c.teaches}</p>
   <div class="panel"><h4>What this case is about (read this yourself)</h4><p>${c.plain}</p></div>
   <div class="blk key"><span class="tag">The answer in one line, don't show</span><p>${c.bottom}</p></div>`;
   const steps=[{name:"Read the prompt",time:"2–3 min",say:[...c.prompt,"Do you have any questions before you start?"],asks:c.clarify,listen:c.openListen,add:(ADD[c.id]||{}).prompt?["partly",(ADD[c.id]||{}).prompt]:null},...c.steps.map(st=>({...st,add:addStep(c,st.name)}))];
@@ -359,7 +359,7 @@ function caseHTML(c,ci){
 function total(id){const sc=(st[id]||{}).sc||{};const v=Object.values(sc);return v.length?v.reduce((a,b)=>a+b,0):"–"}
 
 const casesIndex=`<div class="eyebrow">Pick one</div><h2>The cases</h2><p class="lead">Read the script once on your own before you begin. Each takes 20–35 minutes plus 5 minutes of feedback.</p>
-<p class="lead">They're listed in the <b>best order</b> to run them. The first ${CASES.filter(c=>c.core).length}, marked <b>Core</b>, cover every case type once, easier ones first. If time is short, run those in order and skip the rest.</p>
+<p class="lead">They're listed in the <b>best order</b> to run them. The most common types (profitability, market entry, growth, pricing, M&A, AI) come first, then their variations, then less frequent types. The first ${CASES.filter(c=>c.core).length}, marked <b>Core</b>, cover every case type once. If time is short, run those in order and skip the rest.</p>
 <div class="toc">${CASES.map(c=>`<button data-go="${c.id}"><b>${c.rank}. ${c.title}${c.core?' <span class="chip">Core</span>':""}</b><span class="muted">${c.type} · ${c.diff} · ~${c.mins} min</span><span class="muted">Teaches: ${c.teaches}</span></button>`).join("")}</div>
 <div class="navrow"><button data-go="glossary">← Glossary</button><button data-go="${CASES[0].id}">${CASES[0].title} →</button></div>`;
 

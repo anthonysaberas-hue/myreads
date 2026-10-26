@@ -310,7 +310,7 @@ function cardHTML(c){
   const st=s?.done?`<span class="status done">Done${a?` · ${a.toFixed(1)}/5`:""}</span>`:s&&s.step>0?`<span class="status">In progress · step ${s.step} of ${c.steps.length}</span>`:`<span class="status">Not started</span>`;
   const chips=[`<span class="chip d-${c.diff}">${c.diff}</span>`,c.core?`<span class="chip core">Core</span>`:"",...m.functions.map(f=>`<span class="chip">${f}</span>`),...m.sectors.map(f=>`<span class="chip">${f}</span>`),m.kind!=="Interviewer-led (classic)"?`<span class="chip">${m.kind}</span>`:"",m.video?`<span class="chip vid">Video</span>`:""].join("");
   const stretch=m.stretch.length?`<span class="teach">Stretch: ${m.stretch.join(", ")}</span>`:"";
-  return `<button class="card" data-open="${c.id}"><span class="rank">#${c.rank} in best order</span><h3>${c.title}</h3><div class="meta">${chips}</div><span class="teach"><b>Teaches:</b> ${c.teaches}</span>${stretch}${st}</button>`;
+  return `<button class="card" data-open="${c.id}"><span class="rank">#${c.rank} · ${c.tier}</span><h3>${c.title}</h3><div class="meta">${chips}</div><span class="teach"><b>Teaches:</b> ${c.teaches}</span>${stretch}${st}</button>`;
 }
 function resultsHTML(){
   const list=sorted(CASES.filter(matches));
@@ -338,7 +338,7 @@ function renderHome(){
   <li><b>Close answer-first.</b> <span>Recommendation, 2–3 reasons, risks, next steps. Then score yourself honestly.</span></li></ol>
   <p class="tip" style="margin-top:10px"><span class="addtag" style="margin-left:0">Added</span> and <span class="addtag" style="margin-left:0">Partly added</span> mark questions, data and answers that go beyond ${SRC}, so you know what you won't find in the original.</p>
   <p class="tip" style="margin-top:6px">Practicing with a friend? Hand them the screen with Interviewer mode on: they see every answer and the data to give you.</p></section>
-  <section class="method"><h3>Short on time? Follow the best order</h3><p class="muted" style="margin-top:6px">Cases are ranked so each one teaches something new. The <b>${core.length} core cases</b> cover every case type at least once, easier ones first; the rest repeat tools you've already seen, so do them only if you have time. Turn on <b>Core path only</b> to see just the essentials.</p><p style="margin-top:8px"><b>Core path: ${coreDone} of ${core.length} done</b> · all cases: ${doneN} of ${CASES.length}</p></section>
+  <section class="method"><h3>Short on time? Follow the best order</h3><p class="muted" style="margin-top:6px">Cases are ranked so the types you're most likely to get come first. <b>Tier 1</b> covers the classics: profitability, market entry, growth, pricing, M&A and AI. <b>Tier 2</b> covers their common variations (investment, turnaround, operations, cost reduction), and <b>Tier 3</b> the less frequent types. Together these <b>${core.length} core cases</b> cover every type once; the optional ones repeat tools you've already seen. Turn on <b>Core path only</b> to see just the essentials.</p><p style="margin-top:8px"><b>Core path: ${coreDone} of ${core.length} done</b> · all cases: ${doneN} of ${CASES.length}</p></section>
   <div class="row" style="justify-content:space-between;margin-bottom:10px"><h2>Cases</h2></div>
   <div class="toolbar" role="group" aria-label="Filter cases">
    ${FKEYS.map(([k,l,g])=>ddHTML(k,l,g)).join("")}
