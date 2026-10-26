@@ -53,9 +53,32 @@ textarea{min-height:84px;resize:vertical}
 .method{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:28px}
 .method ol{margin:10px 0 0;padding-left:20px;display:grid;gap:6px}
 .method li span{color:var(--muted)}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.dd{position:relative}
+.dd>summary{list-style:none;cursor:pointer;border:1px solid var(--line);border-radius:6px;background:var(--paper);padding:4px 10px;font-size:.85rem;display:flex;gap:6px;align-items:center;user-select:none}
+.dd>summary::-webkit-details-marker{display:none}
+.dd>summary::after{content:"▾";color:var(--muted);font-size:.75rem}
+.dd>summary:hover{border-color:var(--accent)}
+.dd>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dd.on>summary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.dd.on>summary::after{color:inherit}
+.dd .menu{position:absolute;z-index:20;top:calc(100% + 4px);left:0;min-width:220px;max-width:min(300px,86vw);max-height:300px;overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+.dd .menu label{display:flex;gap:8px;align-items:center;padding:5px 6px;border-radius:5px;font-size:.88rem;cursor:pointer}
+.dd .menu label:hover{background:var(--bg)}
+.dd .menu .n{margin-left:auto;color:var(--muted);font-size:.78rem;font-variant-numeric:tabular-nums}
+.switch{display:flex;gap:6px;align-items:center;font-size:.85rem;border:1px solid var(--line);border-radius:6px;padding:4px 10px;background:var(--paper);cursor:pointer}
+.toolbar select{font:inherit;font-size:.85rem;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);padding:4px 8px}
+.search{flex:1 1 200px;min-width:160px}
+.search input{padding:5px 10px;font-size:.88rem}
+.resultline{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);margin-bottom:12px}
+.card .rank{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+.card .teach{font-size:.84rem;color:var(--muted);line-height:1.4}
+.chip.core{color:var(--accent);border-color:currentColor;font-weight:600}
+.chip.vid{color:var(--ink)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.empty{padding:22px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);text-align:center}
+@media (max-width:560px){.search{flex-basis:100%;order:-1}.toolbar{position:relative}.dd{position:static}.dd .menu{left:0;right:0;max-width:none}}
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
 .card{text-align:left;display:grid;gap:8px;padding:14px 16px;border-radius:10px;background:var(--paper)}
 .card h3{font-size:1.2rem}
 .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
@@ -245,7 +268,12 @@ function renderScript(){
   <div class="turns">${h}</div><div class="next" style="margin-top:20px"><button class="primary" data-backcase>Back to the case</button></div>`;
 }
 /* ---------- app state ---------- */
-let view={name:"home"}, filter="All", ivMode=false, tick=null, fitTick=null;
+/* home filters live in memory only, like the reveals: a refresh clears them */
+const FKEYS=[["kind","Type",c=>[c.meta.kind]],["diff","Difficulty",c=>[c.diff]],["fn","Function",c=>c.meta.functions],["sector","Sector",c=>c.meta.sectors],["stretch","Stretch area",c=>c.meta.stretch]];
+const DORD={Easy:1,Medium:2,Hard:3};
+function freshF(){return {kind:new Set(),diff:new Set(),fn:new Set(),sector:new Set(),stretch:new Set(),video:false,core:false,q:"",sort:"rank"}}
+let F=freshF();
+let view={name:"home"}, ivMode=false, tick=null, fitTick=null;
 let theme="light";try{theme=localStorage.getItem(KEY+"-theme")||"light"}catch(e){}
 document.documentElement.setAttribute("data-theme",theme);
 const app=document.getElementById("app");
@@ -260,10 +288,43 @@ function topBar(){
   <div class="row"><button class="small" data-themetoggle>${theme==="dark"?"Light mode":"Dark mode"}</button><label class="toggle"><input type="checkbox" id="ivmode" ${ivMode?"checked":""}> Interviewer mode (shows all answers until refresh)</label></div></div>`;
 }
 
+function matches(c){
+  for(const [k,,get] of FKEYS) if(F[k].size&&!get(c).some(v=>F[k].has(v))) return false;
+  if(F.video&&!c.meta.video) return false;
+  if(F.core&&!c.core) return false;
+  if(F.q){const q=F.q.toLowerCase();const hay=[c.title,c.plain,c.type,c.teaches,...c.meta.functions,...c.meta.sectors].join(" ").toLowerCase();if(!q.split(/\s+/).every(w=>hay.includes(w)))return false}
+  return true;
+}
+function sorted(list){
+  const by={rank:(a,b)=>a.rank-b.rank,diff:(a,b)=>DORD[a.diff]-DORD[b.diff]||a.rank-b.rank,az:(a,b)=>a.title.localeCompare(b.title)}[F.sort];
+  return list.slice().sort(by);
+}
+function ddHTML(k,label,get){
+  const counts={};CASES.forEach(c=>get(c).forEach(v=>counts[v]=(counts[v]||0)+1));
+  const vals=Object.keys(counts).sort((a,b)=>k==="diff"?DORD[a]-DORD[b]:a.localeCompare(b));
+  const n=F[k].size;
+  return `<details class="dd${n?" on":""}" data-dd="${k}"><summary>${label}<span id="ddn-${k}">${n?` (${n})`:""}</span></summary><div class="menu" role="group" aria-label="${label}">${vals.map(v=>`<label><input type="checkbox" data-f="${k}" value="${esc(v)}" ${F[k].has(v)?"checked":""}> ${esc(v)}<span class="n">${counts[v]}</span></label>`).join("")}</div></details>`;
+}
+function cardHTML(c){
+  const s=store[c.id];const a=avg(s?.scores);const m=c.meta;
+  const st=s?.done?`<span class="status done">Done${a?` · ${a.toFixed(1)}/5`:""}</span>`:s&&s.step>0?`<span class="status">In progress · step ${s.step} of ${c.steps.length}</span>`:`<span class="status">Not started</span>`;
+  const chips=[`<span class="chip d-${c.diff}">${c.diff}</span>`,c.core?`<span class="chip core">Core</span>`:"",...m.functions.map(f=>`<span class="chip">${f}</span>`),...m.sectors.map(f=>`<span class="chip">${f}</span>`),m.kind!=="Interviewer-led (classic)"?`<span class="chip">${m.kind}</span>`:"",m.video?`<span class="chip vid">Video</span>`:""].join("");
+  const stretch=m.stretch.length?`<span class="teach">Stretch: ${m.stretch.join(", ")}</span>`:"";
+  return `<button class="card" data-open="${c.id}"><span class="rank">#${c.rank} in best order</span><h3>${c.title}</h3><div class="meta">${chips}</div><span class="teach"><b>Teaches:</b> ${c.teaches}</span>${stretch}${st}</button>`;
+}
+function resultsHTML(){
+  const list=sorted(CASES.filter(matches));
+  const active=FKEYS.some(([k])=>F[k].size)||F.video||F.core||F.q;
+  return `<div class="resultline"><span>${list.length} of ${CASES.length} cases${active?" match":""}</span><span>Sorted by ${{rank:"best order",diff:"difficulty",az:"name"}[F.sort]}</span></div>`+
+   (list.length?`<div class="cases">${list.map(cardHTML).join("")}</div>`:`<div class="empty">No cases match these filters. <button class="small" data-clear>Clear all</button></div>`);
+}
+function updateResults(){
+  const el=document.getElementById("results");if(el)el.innerHTML=resultsHTML();
+  for(const [k] of FKEYS){const d=app.querySelector(`[data-dd="${k}"]`);if(!d)continue;d.classList.toggle("on",F[k].size>0);document.getElementById("ddn-"+k).textContent=F[k].size?` (${F[k].size})`:""}
+}
 function renderHome(){
-  const types=["All",...new Set(CASES.map(c=>c.type))];
-  const list=CASES.filter(c=>filter==="All"||c.type===filter);
   const doneN=CASES.filter(c=>store[c.id]?.done).length;
+  const core=CASES.filter(c=>c.core), coreDone=core.filter(c=>store[c.id]?.done).length;
   app.innerHTML=topBar()+`
   <section class="intro"><div class="eyebrow">Interview prep cases · ${CASES.length} cases</div>
   <h1>Practice cases the way they're asked</h1>
@@ -277,11 +338,19 @@ function renderHome(){
   <li><b>Close answer-first.</b> <span>Recommendation, 2–3 reasons, risks, next steps. Then score yourself honestly.</span></li></ol>
   <p class="tip" style="margin-top:10px"><span class="addtag" style="margin-left:0">Added</span> and <span class="addtag" style="margin-left:0">Partly added</span> mark questions, data and answers that go beyond ${SRC}, so you know what you won't find in the original.</p>
   <p class="tip" style="margin-top:6px">Practicing with a friend? Hand them the screen with Interviewer mode on: they see every answer and the data to give you.</p></section>
-  <div class="row" style="justify-content:space-between;margin-bottom:10px"><h2>Cases</h2><span class="status">${doneN} of ${CASES.length} done</span></div>
-  <div class="filters" role="group" aria-label="Filter by case type">${types.map(t=>`<button class="small" data-filter="${t}" aria-pressed="${t===filter}">${t}</button>`).join("")}</div>
-  <div class="cases">${list.map(c=>{const s=store[c.id];const a=avg(s?.scores);
-    const st=s?.done?`<span class="status done">Done${a?` · ${a.toFixed(1)}/5`:""}</span>`:s&&s.step>0?`<span class="status">In progress · step ${s.step} of ${c.steps.length}</span>`:`<span class="status">Not started</span>`;
-    return `<button class="card" data-open="${c.id}"><div class="meta"><span class="chip">${c.type}</span><span class="chip d-${c.diff}">${c.diff}</span></div><h3>${c.title}</h3>${st}</button>`}).join("")}</div>
+  <section class="method"><h3>Short on time? Follow the best order</h3><p class="muted" style="margin-top:6px">Cases are ranked so each one teaches something new. The <b>${core.length} core cases</b> cover every case type at least once, easier ones first; the rest repeat tools you've already seen, so do them only if you have time. Turn on <b>Core path only</b> to see just the essentials.</p><p style="margin-top:8px"><b>Core path: ${coreDone} of ${core.length} done</b> · all cases: ${doneN} of ${CASES.length}</p></section>
+  <div class="row" style="justify-content:space-between;margin-bottom:10px"><h2>Cases</h2></div>
+  <div class="toolbar" role="group" aria-label="Filter cases">
+   ${FKEYS.map(([k,l,g])=>ddHTML(k,l,g)).join("")}
+   <label class="switch"><input type="checkbox" data-ft="video" ${F.video?"checked":""}> Video</label>
+   <label class="switch"><input type="checkbox" data-ft="core" ${F.core?"checked":""}> Core path only</label>
+   <button class="small ghost" data-clear>Clear all</button>
+  </div>
+  <div class="toolbar">
+   <label class="search"><span class="sr">Search cases</span><input type="text" id="q" placeholder="Search title, sector, function…" value="${esc(F.q)}" autocomplete="off"></label>
+   <label class="toggle">Sort <select id="sort"><option value="rank" ${F.sort==="rank"?"selected":""}>Best order</option><option value="diff" ${F.sort==="diff"?"selected":""}>Difficulty</option><option value="az" ${F.sort==="az"?"selected":""}>A–Z</option></select></label>
+  </div>
+  <div id="results">${resultsHTML()}</div>
   <div class="fitcard"><div><h3>Fit drill</h3><p class="muted">A random fit question with a 2-minute clock. Answers over 2 minutes lose the interviewer.</p></div><button class="primary" data-fit>Start fit drill</button></div>`;
 }
 
@@ -382,12 +451,22 @@ function treeAct(s,cid,act,arg){
 let pendingFocus=null;
 
 /* ---------- events ---------- */
+app.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.dataset.f){const set=F[t.dataset.f];t.checked?set.add(t.value):set.delete(t.value);return updateResults()}
+  if(t.dataset.ft){F[t.dataset.ft]=t.checked;return updateResults()}
+  if(t.id==="sort"){F.sort=t.value;return updateResults()}
+});
+function closeDD(except){app.querySelectorAll("details.dd[open]").forEach(d=>{if(d!==except)d.open=false})}
+document.addEventListener("click",e=>closeDD(e.target.closest("details.dd")));
+app.addEventListener("toggle",e=>{if(e.target.matches?.("details.dd")&&e.target.open)closeDD(e.target)},true);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){const o=app.querySelector("details.dd[open]");if(o){o.open=false;o.querySelector("summary").focus()}}});
 app.addEventListener("click",e=>{
   const b=e.target.closest("button");if(!b)return;
   const d=b.dataset;
   if("themetoggle"in d){theme=theme==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",theme);try{localStorage.setItem(KEY+"-theme",theme)}catch(er){}const y=window.scrollY;render();window.scrollTo(0,y);return}
   if("open"in d)return go({name:"case",id:d.open});
-  if("filter"in d){filter=d.filter;return render()}
+  if("clear"in d){F=freshF();return render()}
   if("home"in d){save();return go({name:"home"})}
   if("fit"in d){let n;do{n=Math.floor(Math.random()*FIT.length)}while(view.name==="fit"&&n===view.q&&FIT.length>1);return go({name:"fit",q:n})}
   if("fullscript"in d)return go({name:"script",id:view.id});
@@ -415,6 +494,7 @@ app.addEventListener("click",e=>{
 app.addEventListener("input",e=>{
   const t=e.target;
   if(t.id==="ivmode"){ivMode=t.checked;const y=window.scrollY;render();window.scrollTo(0,y);return}
+  if(t.id==="q"){F.q=t.value.trim();return updateResults()}
   if(view.name!=="case")return;
   const s=cs(view.id);
   if(t.dataset.ans!=null)s.ans[t.dataset.ans]=t.value;
