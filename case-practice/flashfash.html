@@ -1,4 +1,4 @@
-<title>FlashFash Case Room</title>
+<title>Prep Case Room</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -162,7 +162,7 @@ th{font-weight:600}
 
 <div class="wrap" id="app"></div>
 
-<script src="flashfash-cases.js"></script>
+<script src="prep-cases.js"></script>
 <script>
 const CASES = window.CASES;
 
@@ -256,7 +256,7 @@ function avg(sc){const v=Object.values(sc||{});return v.length?(v.reduce((a,b)=>
 function go(v){view=v;clearInterval(tick);clearInterval(fitTick);render();window.scrollTo(0,0)}
 
 function topBar(){
-  return `<div class="top"><span class="brand">FlashFash Case Room</span>
+  return `<div class="top"><span class="brand">Prep Case Room</span>
   <div class="row"><button class="small" data-themetoggle>${theme==="dark"?"Light mode":"Dark mode"}</button><label class="toggle"><input type="checkbox" id="ivmode" ${ivMode?"checked":""}> Interviewer mode (shows all answers until refresh)</label></div></div>`;
 }
 
@@ -265,7 +265,7 @@ function renderHome(){
   const list=CASES.filter(c=>filter==="All"||c.type===filter);
   const doneN=CASES.filter(c=>store[c.id]?.done).length;
   app.innerHTML=topBar()+`
-  <section class="intro"><div class="eyebrow">FlashFash · M&A case</div>
+  <section class="intro"><div class="eyebrow">Interview prep cases · ${CASES.length} cases</div>
   <h1>Practice cases the way they're asked</h1>
   <p>Each case runs like a real interview: a client story and objective, exhibits you have to read, a twist partway through, and a decision to make at the end. The interviewer only hands over data when you ask for it, and the model answer stays hidden until you've committed to yours.</p></section>
   <section class="method"><h3>How to run each case</h3><ol>
